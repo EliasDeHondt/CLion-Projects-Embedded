@@ -1,0 +1,14 @@
+//
+// Created by elias on 27/03/2023.
+//
+
+#ifndef CLION_PROJECTS_EMBEDDED_LUCHTVOCHTIGHEID_H
+#define CLION_PROJECTS_EMBEDDED_LUCHTVOCHTIGHEID_H
+
+
+class Luchtvochtigheid {
+
+};
+
+
+#endif //CLION_PROJECTS_EMBEDDED_LUCHTVOCHTIGHEID_H

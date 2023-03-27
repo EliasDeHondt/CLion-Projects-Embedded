@@ -10,4 +10,3 @@ void loop() {
     delay(1000); // wacht 1 seconde
     Serial.println("Hello, world!"); // stuur "Hello, world!" naar de seriële monitor
 }
-

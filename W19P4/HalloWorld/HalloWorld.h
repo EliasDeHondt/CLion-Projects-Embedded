@@ -1,0 +1,14 @@
+//
+// Created by elias on 28/03/2023.
+//
+
+#ifndef CLION_PROJECTS_EMBEDDED_HALLOWORLD_H
+#define CLION_PROJECTS_EMBEDDED_HALLOWORLD_H
+
+
+class HalloWorld {
+
+};
+
+
+#endif //CLION_PROJECTS_EMBEDDED_HALLOWORLD_H

@@ -1,0 +1,41 @@
+{
+	"folders": [
+		{
+			"name": "Blinking_LED",
+			"path": "Blinking_LED"
+		},
+		{
+			"name": "Flashing_LEDs",
+			"path": "Flashing_LEDs"
+		},
+		{
+			"name": "LED_Library_Aanmaken",
+			"path": "LED_Library_Aanmaken"
+		},
+		{
+			"name": "LED_Dimmen",
+			"path": "LED_Dimmen"
+		},
+		{
+			"name": "LED_Chaos",
+			"path": "LED_Chaos"
+		},
+		{
+			"name": "Morse_trainer",
+			"path": "Morse_trainer"
+		},
+		{
+			"name": "Blinking_LED_beter",
+			"path": "Blinking_LED_beter"
+		},
+		{
+			"name": "C_Basisoefeningen",
+			"path": "C_Basisoefeningen"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"delay.h": "c"
+		}
+	}
+}

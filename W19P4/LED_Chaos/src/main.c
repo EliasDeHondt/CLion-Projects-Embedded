@@ -1,3 +1,16 @@
+/**
+ * @author Elias De Hondt
+ * @see https://eliasdh.com
+ * @since 18/04/2023
+ */
+
+#define __DELAY_BACKWARD_COMPATIBLE__
+#include <util/delay.h>
+#include <avr/io.h>
+#include <stdlib.h>
+#include <time.h>
+#include <led.h>
+
 /*
 Schrijf een programmaatje dat de verschillende leds in een random patroon laat flikkeren: willekeurig gekozen leds worden gedurende willekeurig lange periodes 
 (tussen bijvoorbeeld 100 en 1000 milliseconden) aan en uit gezet.

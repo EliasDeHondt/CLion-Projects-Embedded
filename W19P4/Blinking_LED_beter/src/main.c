@@ -1,3 +1,9 @@
+/**
+ * @author Elias De Hondt
+ * @see https://eliasdh.com
+ * @since 18/04/2023
+ */
+
 #include <util/delay.h>
 #include <avr/io.h>
  

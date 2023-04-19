@@ -1,3 +1,14 @@
+/**
+ * @author Elias De Hondt
+ * @see https://eliasdh.com
+ * @since 18/04/2023
+ */
+
+#include <util/delay.h>
+#include <avr/io.h>
+
+#define NUMBER_OF_LEDS 4 
+
 /*
 In de demo "Flashing Leds" schreven we een aantal functies om handig met de leds te kunnen werken. In deze oefeningen werken we verder van die code.
 
@@ -17,11 +28,6 @@ void lightDownLeds (uint8_t);
 void lightDownAllLeds ();
 Test in een eenvoudig programmaatje... 
 */
-
-#include <util/delay.h>
-#include <avr/io.h>
-
-#define NUMBER_OF_LEDS 4 
 
 void enableLed(int lednumber) { // Enable
     if (lednumber < 0 || lednumber > NUMBER_OF_LEDS - 1) return; // If

@@ -1,3 +1,14 @@
+/**
+ * @author Elias De Hondt
+ * @see https://eliasdh.com
+ * @since 18/04/2023
+ */
+
+#define __DELAY_BACKWARD_COMPATIBLE__
+#include <util/delay.h>
+#include <avr/io.h>
+#include <led.h>
+
 /*
 Een led kan enkel volledig aan of volledig af gezet worden. Om een led "half" aan te zetten (te "dimmen" eigenlijk) maken we gebruik van een trukje: 
 we zetten de led in een lus heel snel aan en af zodat hij de helft van de tijd aan is, en de andere helft uit. 
@@ -11,11 +22,6 @@ Voeg een functie fadeInLed(int led, int duration) die gebruik maakt van de dimLe
 
 Test in een eenvoudig programmaatje!
 */
-
-#define __DELAY_BACKWARD_COMPATIBLE__
-#include <util/delay.h>
-#include <avr/io.h>
-#include <led.h>
 
 /*
 void dimLed(int lednumber, int percentage, int duration) {

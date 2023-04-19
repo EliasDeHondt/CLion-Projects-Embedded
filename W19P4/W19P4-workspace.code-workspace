@@ -38,7 +38,8 @@
 			"delay.h": "c",
 			"io.h": "c",
 			"led.h": "c",
-			"time.h": "c"
+			"time.h": "c",
+			"stdlib.h": "c"
 		}
 	}
 }

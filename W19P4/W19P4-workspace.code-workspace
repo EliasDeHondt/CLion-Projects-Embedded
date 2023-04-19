@@ -35,7 +35,10 @@
 	],
 	"settings": {
 		"files.associations": {
-			"delay.h": "c"
+			"delay.h": "c",
+			"io.h": "c",
+			"led.h": "c",
+			"time.h": "c"
 		}
 	}
 }

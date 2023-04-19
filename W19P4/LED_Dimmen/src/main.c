@@ -11,44 +11,45 @@ Voeg een functie fadeInLed(int led, int duration) die gebruik maakt van de dimLe
 
 Test in een eenvoudig programmaatje!
 */
+
+#define __DELAY_BACKWARD_COMPATIBLE__
 #include <util/delay.h>
 #include <avr/io.h>
+#include <led.h>
 
+/*
 void dimLed(int lednumber, int percentage, int duration) {
-    // We schuiven de 1 een x (lednumber = x) aantal plaatsen naar links.
-    DDRB = (1 << (PB2 + lednumber)); // Enable
-    
-    // Is de opgegeven tijdsperiode.
-    for (int i = duration; i > 0; i -= 10) {
-
-        PORTB = (1 << (PB2 + lednumber)); // Led x uitzetten;
-
-        _delay_ms(percentage/10); // De tijd dat de Led uit moet staan.
-
-        PORTB = ~(1 << (PB2 + lednumber)); // Led x aanzetten.
-
-        _delay_ms((100-percentage)/10); // De tijd dat de Led aan moet staan.
+    for (int i = duration; i > 0; i -= 10) { // Is de opgegeven tijdsperiode. (Stap waarde 10)
+        lightDownLed(lednumber); // Led x uitzetten.
+        _delay_ms(percentage/10); // De tijd dat de Led uit moet staan. (Stap waarde 10)
+        lightUpLed(lednumber); // Led x aanzetten.
+        _delay_ms((100-percentage)/10); // De tijd dat de Led aan moet staan. (Stap waarde 10)
     }
 }
 
-void fadeInLed(int led, int duration) {
-    // Door alle mogelijke percentages gaan.
-    for (int percentage = 0; percentage <= 100; percentage++) {
-
-        
-        dimLed(led, percentage, duration);
-
-        
+void fadeInLed(int lednumber, int duration) {
+    for (int percentage = 1; percentage <= 100; percentage++) { // Door alle mogelijke percentages gaan. (0% tot 100%)
+        dimLed(lednumber, percentage, (duration/100));
     }
+    lightUpLed(lednumber); // Eindpositie van Led.
 }
 
-
+void fadeOutLed(int lednumber, int duration) {
+    for (int percentage = 100; percentage > 1; percentage--) { // Door alle mogelijke percentages gaan. (100% tot 0%)
+        dimLed(lednumber, percentage, (duration/100));
+    }
+    lightDownLed(lednumber); // Eindpositie van Led.
+}
+*/
 
 // Test
 int main() {
-    // dimLed(1,90,10000);
+    enableAllLeds();
+    lightDownAllLeds();
 
+    dimLed(0,90,10000);
     fadeInLed(1,10000);
+    fadeOutLed(2,10000);
 
     return 0;
 }

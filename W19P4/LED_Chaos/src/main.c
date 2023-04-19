@@ -12,5 +12,27 @@ Het idee is dat je de huidige tijd gebruikt als seed van je randomgenerator. Dat
 Bijgevolg kunnen we onze random generator niet op die manier seeden, en zal er dus steeds dezelfde random reeks gegenereerd worden. 
 Je kan aan de srand functie dus gewoon 0 meegeven, maakt niet zoveel uit. In de toekomst zouden we bijvoorbeeld de input van de potentiometer kunnen gebruiken als seed...
 */
+#define __DELAY_BACKWARD_COMPATIBLE__
+#include <util/delay.h>
+#include <avr/io.h>
+#include <stdlib.h>
+#include <time.h>
+#include <led.h>
 
+int main() {
+    // Set the seed for the random number generator.
+    srand(0);
 
+    while (1) {
+        // Generate a random number between 0 and 4
+        int random_led = rand() % 4;
+
+        // Generate a random number between 100 and 1000
+        int duration = rand() % 901 + 100;
+
+        enableLed(random_led); // Led x inschakelen.
+        lightUpLed(random_led); // Led x aanzetten.
+        _delay_ms(duration); // x tijd wachten.
+        lightDownLed(random_led); // Led x uitzetten.
+    }
+}

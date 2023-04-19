@@ -20,3 +20,15 @@ De string bevat een opeenvolging van de letters a, b, c en d. Een ‘a’ licht 
 8. Schrijf een programma dat uitgaande van een string de ledjes laat oplichten, deze keer is het een willekeurige reeks letters. 
 Bij een a lichtje alle 4 de ledjes 1 keer op, bij een b licht je ze 2 keer op, enzovoort
 */
+
+#define __DELAY_BACKWARD_COMPATIBLE__
+#include <util/delay.h>
+#include <avr/io.h>
+#include <stdlib.h>
+#include <time.h>
+#include <led.h>
+
+int main() {
+    
+    return 0;
+}

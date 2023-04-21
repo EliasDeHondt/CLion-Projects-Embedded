@@ -5,13 +5,15 @@
  */
 
 #define __DELAY_BACKWARD_COMPATIBLE__
-#define ARRAY_SIZE 3
 #include <util/delay.h>
 #include <avr/io.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> // Random
 #include <time.h>
-#include <led.h>
+#include <string.h>
+
+#include <led.h> // Led
+#include <usart.h> // Printf()
 
 /*
 We bouwen een eenvoudige morse-trainer die je kan gebruiken om te testen hoe goed je morse-code kent.
@@ -303,27 +305,25 @@ void vertalingStr(char str[], int len) {
     for (int i = 0; i <= len; i++) {
         vertaling(str[i]);
     }
-    
-
 }
 
 int main() {
-    /* Uitbreiding 2. (TEST)
+    initUSART(); // Voor printf()
+    
+    // Uitbreiding 2. (TEST)
     enableAllLeds(); // Schakelt al de leds in.
     lightUpAllLeds(); // Zet al de Lets aan.
     
-    char data[ARRAY_SIZE] = "sos";
-    int len = ARRAY_SIZE;
+    char data[] = "sos";
+    int len = strlen(data);
 
     vertalingStr(data, len);
-    */
     
-
-    
+    /*
     // Vereisten 1.
     enableAllLeds(); // Schakelt al de leds in.
     lightUpAllLeds(); // Zet al de Lets aan.
-    srand(0); // Set the seed for the random number generator.
+    srand(time(NULL)); // Set the seed for the random number generator.
     
     for (int i = 0; i < 4; i++) {
         _delay_ms(1000); // Wacht 1 seconden.
@@ -352,7 +352,7 @@ int main() {
         // Vereisten 2.2.
         _delay_ms(5000); // Wacht 5 seconden.
         // Vereisten 2.3.
-        printf("Hier is het correcte antwoord %c", karakters[0]);
+        printf("\nHier is het correcte antwoord %c \n", karakters[i]);
     }
 
     // Vereisten 3.
@@ -366,5 +366,6 @@ int main() {
             _delay_ms(100);
         }
     }
+    */
     return 0;
 }

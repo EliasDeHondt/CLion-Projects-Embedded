@@ -3,43 +3,46 @@
 #include <util/delay.h>
 #include <avr/io.h>
 
-void enableLed(int lednumber) { // Enable
-    if (lednumber < 0 || lednumber > NUMBER_OF_LEDS - 1) return; // If
-    DDRB |= (1 << (PB2 + lednumber)); // Else
+void enableLed(int lednumber) {
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
+  DDRB |= (1 << (PB2 + lednumber)); // 1 op juiste pin want output
 }
-
-void enableLeds(uint8_t lednumbers) { // Enable
-    DDRB |= lednumbers;
+ 
+void enableLeds(uint8_t leds) {
+  leds &= 0b00001111; // Eerste 4 bits staan nu op 0
+  DDRB |= (leds << PB2); // Shiften en juiste pins op 1 zetten
 }
-
-void enableAllLeds() { // Enable
-    DDRB = 0b00111100;
+ 
+void enableAllLeds() { 
+    enableLeds(0b00001111); 
 }
-
-void lightUpLed(int lednumber) { // Up
-    if (lednumber < 0 || lednumber > NUMBER_OF_LEDS - 1) return; // If
-    PORTB &= ~(1 << (PB2 + lednumber)); // Else
+ 
+void lightUpLed(int lednumber) {
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
+  PORTB &= ~(1 << (PB2 + lednumber)); // Juiste pin op 0 zetten 
 }
-
-void lightUpLeds(uint8_t lednumbers) { // Up
-    PORTB &= lednumbers;
+ 
+void lightUpLeds(uint8_t leds) {
+  leds &= 0b00001111;
+  PORTB &= ~(leds << PB2);
 }
-
-void lightUpAllLeds() { // Up
-    PORTB = 0b00000000;
+ 
+void lightUpAllLeds() { 
+    lightUpLeds(0b00001111); 
 }
-
-void lightDownLed(int lednumber) { // Down
-    if (lednumber < 0 || lednumber > 3) return; // If
-    PORTB |= (1 << (PB2 + lednumber)); // Else
+ 
+void lightDownLed(int lednumber) {  // Juiste pin 0 (AAN)
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
+  PORTB |= (1 << (PB2 + lednumber)); // Juiste pin op 1 zetten
 }
-
-void lightDownLeds(uint8_t lednumbers) { // Down
-    PORTB |= lednumbers;
+ 
+void lightDownLeds(uint8_t leds) {
+  leds &= 0b00001111;  
+  PORTB |= (leds << PB2);
 }
-
-void lightDownAllLeds() { // Down
-    PORTB = 0b00111100;
+ 
+void lightDownAllLeds() { 
+    lightDownLeds(0b00001111); 
 }
 
 void dimLed(int lednumber, int percentage, int duration) {
@@ -52,14 +55,14 @@ void dimLed(int lednumber, int percentage, int duration) {
 }
 
 void fadeInLed(int lednumber, int duration) {
-    for (int percentage = 1; percentage <= 100; percentage++) { // Door alle mogelijke percentages gaan. (0% tot 100%)
+    for (int percentage = 1; percentage <= 100; percentage++) { // Door alle mogelijke percentages gaan. (1% tot 100%)
         dimLed(lednumber, percentage, (duration/100));
     }
     lightUpLed(lednumber); // Eindpositie van Led.
 }
 
 void fadeOutLed(int lednumber, int duration) {
-    for (int percentage = 100; percentage > 1; percentage--) { // Door alle mogelijke percentages gaan. (100% tot 0%)
+    for (int percentage = 100; percentage > 1; percentage--) { // Door alle mogelijke percentages gaan. (100% tot 1%)
         dimLed(lednumber, percentage, (duration/100));
     }
     lightDownLed(lednumber); // Eindpositie van Led.

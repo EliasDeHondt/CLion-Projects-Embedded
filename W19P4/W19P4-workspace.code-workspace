@@ -31,6 +31,9 @@
 		{
 			"name": "C_Basisoefeningen",
 			"path": "C_Basisoefeningen"
+		},
+		{
+			"path": "../libraries"
 		}
 	],
 	"settings": {
@@ -39,7 +42,8 @@
 			"io.h": "c",
 			"led.h": "c",
 			"time.h": "c",
-			"stdlib.h": "c"
+			"stdlib.h": "c",
+			"usart.h": "c"
 		}
 	}
 }

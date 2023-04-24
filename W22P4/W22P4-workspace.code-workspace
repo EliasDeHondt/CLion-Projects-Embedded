@@ -1,9 +1,7 @@
 {
 	"folders": [
-	],
-	"settings": {
-		"files.associations": {
-			"delay.h": "c"
+		{
+			"path": "../libraries"
 		}
-	}
+	]
 }

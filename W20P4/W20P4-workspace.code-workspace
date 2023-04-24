@@ -1,5 +1,44 @@
 {
 	"folders": [
+		{
+			"path": "../libraries"
+		},
+		{
+			"name": "Write_To_Serial",
+			"path": "Write_To_Serial"
+		},
+		{
+			"name": "Read_Input_From_Buttons",
+			"path": "Read_Input_From_Buttons"
+		},
+		{
+			"name": "Read_Input_From_Buttons_With_Macros",
+			"path": "Read_Input_From_Buttons_With_Macros"
+		},
+		{
+			"name": "C_Pointers",
+			"path": "C_Pointers"
+		},
+		{
+			"name": "Interrupts_And_Buttons",
+			"path": "Interrupts_And_Buttons"
+		},
+		{
+			"name": "Button_Library_Maken",
+			"path": "Button_Library_Maken"
+		},
+		{
+			"name": "C_Oefeningen_Op_Pointers",
+			"path": "C_Oefeningen_Op_Pointers"
+		},
+		{
+			"name": "Combineer_LEDs_Met_Buttons",
+			"path": "Combineer_LEDs_Met_Buttons"
+		},
+		{
+			"name": "Simon_Says",
+			"path": "Simon_Says"
+		}
 	],
 	"settings": {
 		"files.associations": {

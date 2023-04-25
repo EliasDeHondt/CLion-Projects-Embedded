@@ -24,37 +24,6 @@ char morse[36][6] = {".-",    "-...",  "-.-.",  "-..",   ".",     "..-.",
                      "...",   "-",     "..-",   "...-",  ".--",   "-..-",
                      "-.--",  "--..",  "-----", ".----", "..---", "...--",
                      "....-", ".....", "-....", "--...", "---..", "----."};
-/*
-We bouwen een eenvoudige morse-trainer die je kan gebruiken om te testen hoe
-goed je morse-code kent.
-
-Vereisten:
-    1. Zodra de applicatie start wordt er een aftelpatroon getoond met de
-ledjes, zodat de gebruiker zich kan klaarzetten. Het aftelpatroon werkt als
-volgt: je laat eerst de 4 ledjes branden, dan 3, 2, 1 en 0 en dan start de echte
-morse-training.
-
-    2. Je herhaalt nu 10 keer volgende stappen:
-
-        2.1. Je toont de morse-code van een willekeurig karakter.
-             Om bijvoorbeeld een A te tonen, laat je alle ledjes kort oplichten
-en daarna lang oplichten. Voor een Z licht je alle ledjes 2 keer lang op en dan
-2 keer kort.
-
-        2.2. Wacht nu even, zodat de gebruiker de tijd krijgt om na te denken en
-zijn antwoord voor zichzelf te formuleren.
-
-        2.3. Toon nu het correcte antwoord via printf in de seriële monitor.
-
-    3. Na 10 letters eindigt het programma met een frivool led-dansje dat een
-klein beetje tijd in beslag neemt.
-
-Uitbreiding:
-    1. Maak gebruik van C arrays om de morse-code in op te slaan.
-
-    2. Schrijf een functie die een string als parameter krijgt, en vervolgens
-dat woord in Morse-code toont op de leds...
-*/
 
 void streep() {
   lightUpAllLeds();    // Zet al de Lets aan.

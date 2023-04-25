@@ -43,7 +43,9 @@
 			"led.h": "c",
 			"time.h": "c",
 			"stdlib.h": "c",
-			"usart.h": "c"
+			"usart.h": "c",
+			"stdio.h": "c",
+			"string.h": "c"
 		}
 	}
 }

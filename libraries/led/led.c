@@ -67,3 +67,18 @@ void fadeOutLed(int lednumber, int duration) {
     }
     lightDownLed(lednumber); // Eindpositie van Led.
 }
+
+void flipLed(int lednumber) {
+    if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
+
+  // Huidige status van de LED lezen
+  int pin_mask = (1 << (PB2 + lednumber));
+  int current_state = (PINB & pin_mask) ? 1 : 0;
+
+  // Status van de LED omdraaien
+  if (current_state) {
+    lightDownLed(lednumber); // Als LED aanstaat, uitzetten
+  } else {
+    lightUpLed(lednumber); // Als LED uitstaat, aanzetten
+  }
+}

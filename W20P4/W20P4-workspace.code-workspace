@@ -47,7 +47,10 @@
 	"settings": {
 		"files.associations": {
 			"delay.h": "c",
-			"usart.h": "c"
+			"usart.h": "c",
+			"string.h": "c",
+			"led.h": "c",
+			"button.h": "c"
 		}
 	}
 }

@@ -7,8 +7,10 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include <usart.h>
+#include <string.h>
 
 #define MAX 5
+#define MAXNAMEN 7
 #define ZEVENVOUD(getal) (getal * 7)
 
 /*
@@ -59,26 +61,57 @@ Gewenste afdruk in de serial monitor:
   Kleinste = Anniek
 */
 
-void printArray(int* p) {
-  printf("Inhoud van array:");
+void printArray(int* pointer) {
+  printf("\nInhoud van array:\n");
   for (int i = 0; i <+ MAX; i++) {
-    printf("Op adres: %p zit de waarde: %d\n", p, p[i]);
+    printf("\tOp adres: %p zit de waarde: %d\n", pointer, pointer[i]);
   }
 }
 
-void vulArray(int* p) {
+void vulArray(int* pointer) {
+  for (int i = 0; i < MAX; i++) {
+    pointer[i] = ZEVENVOUD(i);
+  }
+}
 
+void drukEersteLetters(char (*pointer)[10]) {
+  printf("Eerste letters: ");
+  for (int i = 0; i <= MAXNAMEN; i++) {
+    printf("%c", pointer[i][0]);
+  }
+  printf("\n");
+}
+
+// Deze declaratie geeft aan dat zoekKleinsteNaam() een pointer teruggeeft naar een char-array.
+char *zoekKleinsteNaam(char (*pointer)[10]) {
+  int lens[MAXNAMEN]; // array om de lengtes op te slaan
+  int index = 0;
+  int kleinste = 10;
+  for (int i = 0; i < MAXNAMEN; i++) {
+    lens[i] = strlen(pointer[i]);
+    if (kleinste > lens[i]) {
+        kleinste = lens[i];
+        index = i;
+    }
+  }
+  return pointer[index];
 }
 
 int main() {
-  // pointerOef_1
   initUSART();
+/*
+  // pointerOef_1
   int myArray[MAX] = {0}; // Alles op 0.
-
-  printArray(MAX);
-  vulArray(ZEVENVOUD(MAX));
-
-
+  printArray(myArray);
+  vulArray(myArray);
+  printArray(myArray);
+*/
+  
   // pointerOef_2
+  char namen[MAXNAMEN][10] = {"Camille", "Cedric", "Daan", "Dylan", "Jacob", "Tim", "Noah"};
+  drukEersteLetters(namen);
+  char* kleinste = zoekKleinsteNaam(namen);
+  printf("Kleinste = %s", kleinste);
+
   return 0;
 }

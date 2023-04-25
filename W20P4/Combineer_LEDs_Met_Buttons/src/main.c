@@ -4,6 +4,12 @@
  * @since 25/04/2023
  */
 
+#include <util/delay.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <button.h>
+#include <led.h>
+
 /*
 Voor deze oefening werk je verplicht met interrupts, dus zorg dat je de tutorials doorgenomen hebt!
 
@@ -19,9 +25,37 @@ Je kan best je library button.h en button.c eerst uitbreiden met 2 functies:
   enableAllButtonInterrupts();
 */
 
-int main() {
+int button0_pressed = 0;
+int button1_pressed = 0;
+int button2_pressed = 0;
 
-  
-  
-  return 0;
+ISR(PCINT1_vect) {
+  if (buttonPushed(0)) { button0_pressed = !button0_pressed; }
+  if (buttonPushed(1)) { button1_pressed = !button1_pressed; }
+  if (buttonPushed(2)) { button2_pressed = !button2_pressed; }
+}
+
+int main() {
+  enableAllLeds();
+  lightDownAllLeds();
+  enableAllButtons();
+  enableAllButtonInterrupts();
+
+  while (1) {
+      if (button0_pressed) {
+          lightUpLed(0);
+          _delay_ms(500);
+      } else { lightDownLed(0); }
+
+      if (button1_pressed) {
+          lightUpLed(1);
+          _delay_ms(500);
+      } else { lightDownLed(1); }
+
+      if (button2_pressed) {
+          lightUpLed(2);
+          _delay_ms(500);
+      } else { lightDownLed(2); }
+    }
+    return 0;
 }

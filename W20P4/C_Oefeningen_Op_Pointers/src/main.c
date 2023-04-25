@@ -4,6 +4,13 @@
  * @since 25/04/2023
  */
 
+#include <util/delay.h>
+#include <avr/io.h>
+#include <usart.h>
+
+#define MAX 5
+#define ZEVENVOUD(getal) (getal * 7)
+
 /*
 1) Maak een nieuw project "pointerOef_1"
     Definieer 2 macro's: MAX (om het aantal elementen van een array vast te leggen op 5) en ZEVENVOUD 
@@ -52,9 +59,26 @@ Gewenste afdruk in de serial monitor:
   Kleinste = Anniek
 */
 
-int main() {
+void printArray(int* p) {
+  printf("Inhoud van array:");
+  for (int i = 0; i <+ MAX; i++) {
+    printf("Op adres: %p zit de waarde: %d\n", p, p[i]);
+  }
+}
 
-  
-  
+void vulArray(int* p) {
+
+}
+
+int main() {
+  // pointerOef_1
+  initUSART();
+  int myArray[MAX] = {0}; // Alles op 0.
+
+  printArray(MAX);
+  vulArray(ZEVENVOUD(MAX));
+
+
+  // pointerOef_2
   return 0;
 }

@@ -38,11 +38,16 @@
 		{
 			"name": "Simon_Says",
 			"path": "Simon_Says"
+		},
+		{
+			"name": "PointersAndArrays",
+			"path": "PointersAndArrays"
 		}
 	],
 	"settings": {
 		"files.associations": {
-			"delay.h": "c"
+			"delay.h": "c",
+			"usart.h": "c"
 		}
 	}
 }

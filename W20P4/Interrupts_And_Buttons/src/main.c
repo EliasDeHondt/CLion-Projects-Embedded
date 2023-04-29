@@ -33,11 +33,11 @@ int main() {
   enableButton(1);
   lightDownAllLeds();
   PCICR |= (1 << PCIE1);  // in Pin Change Interrupt Control Register: geef aan
-                        // welke interrupt(s) je wil activeren (PCIE0: poort B,
-                        // PCIE1: poort C, PCIE2: poort D)
-  PCMSK1 |= (1 << PC2);  // in overeenkomstig Pin Change Mask Register: geef
-                           // aan welke pin(s) van die poort de ISR activeren
-  sei();  // Set Enable Interrupts --> globaal interrupt systeem aanzetten
+                          // welke interrupt(s) je wil activeren (PCIE0: poort B,
+                          // PCIE1: poort C, PCIE2: poort D)
+  PCMSK1 |= (1 << PC2);   // in overeenkomstig Pin Change Mask Register: geef
+                          // aan welke pin(s) van die poort de ISR activeren
+  sei();                  // Set Enable Interrupts --> globaal interrupt systeem aanzetten
   while (1) {
     printf("Heartbeat...\n");
     lightUpAllLeds();

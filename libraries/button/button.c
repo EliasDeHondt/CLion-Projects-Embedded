@@ -38,7 +38,7 @@ void enableButtonInterrupt(int button) {
   if (button < 1 || button > 3) { return -1; } // 1, 2 of 3 (3 button)
   PCICR |= (1 << PCIE1);
   PCMSK1 |= (1 << button);
-  sei();
+  sei(); // Set enable interrupt
 }
 
 void enableAllButtonInterrupts() {

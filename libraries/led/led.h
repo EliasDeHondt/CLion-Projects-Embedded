@@ -26,3 +26,5 @@ void fadeInLed(int lednumber, int duration);
 void fadeOutLed(int lednumber, int duration);
 
 void flipLed(int lednumber);
+
+void flashLed(int lednumber, int duration);

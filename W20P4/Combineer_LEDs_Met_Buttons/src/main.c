@@ -30,9 +30,9 @@ int button1_pressed = 0;
 int button2_pressed = 0;
 
 ISR(PCINT1_vect) {
-  if (buttonPushed(0)) { button0_pressed = !button0_pressed; }
-  if (buttonPushed(1)) { button1_pressed = !button1_pressed; }
-  if (buttonPushed(2)) { button2_pressed = !button2_pressed; }
+  if (buttonPushed(0)) button0_pressed = !button0_pressed;
+  if (buttonPushed(1)) button1_pressed = !button1_pressed;
+  if (buttonPushed(2)) button2_pressed = !button2_pressed;
 }
 
 int main() {
@@ -42,20 +42,14 @@ int main() {
   enableAllButtonInterrupts();
 
   while (1) {
-      if (button0_pressed) {
-          lightUpLed(0);
-          _delay_ms(500);
-      } else { lightDownLed(0); }
+      if (button0_pressed) flashLed(0, 500);
+      else lightDownLed(0);
 
-      if (button1_pressed) {
-          lightUpLed(1);
-          _delay_ms(500);
-      } else { lightDownLed(1); }
+      if (button1_pressed) flashLed(1, 500);
+      else lightDownLed(1);
 
-      if (button2_pressed) {
-          lightUpLed(2);
-          _delay_ms(500);
-      } else { lightDownLed(2); }
+      if (button2_pressed) flashLed(2, 500);
+      else lightDownLed(2);
     }
     return 0;
 }

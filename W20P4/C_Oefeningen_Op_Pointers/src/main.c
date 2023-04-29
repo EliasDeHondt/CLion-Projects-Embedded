@@ -64,7 +64,7 @@ Gewenste afdruk in de serial monitor:
 void printArray(int* pointer) {
   printf("\nInhoud van array:\n");
   for (int i = 0; i <+ MAX; i++) {
-    printf("\tOp adres: %p zit de waarde: %d\n", pointer, pointer[i]);
+    printf("\tOp adres: %p zit de waarde: %d\n", &pointer[i], pointer[i]);
   }
 }
 

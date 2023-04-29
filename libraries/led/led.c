@@ -1,5 +1,6 @@
 #define __DELAY_BACKWARD_COMPATIBLE__
-#define NUMBER_OF_LEDS 4 
+#define NUMBER_OF_LEDS 4
+
 #include <util/delay.h>
 #include <avr/io.h>
 
@@ -69,10 +70,10 @@ void fadeOutLed(int lednumber, int duration) {
 }
 
 void flipLed(int lednumber) {
-    if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
 
   // Huidige status van de LED lezen
-  int pin_mask = (1 << (PB2 + lednumber));
+  int pin_mask = (1 << (PB2 + lednumber)); // Aan is 1 | uit is 0
   int current_state = (PINB & pin_mask) ? 1 : 0;
 
   // Status van de LED omdraaien
@@ -81,4 +82,13 @@ void flipLed(int lednumber) {
   } else {
     lightUpLed(lednumber); // Als LED uitstaat, aanzetten
   }
+}
+
+void flashLed(int lednumber, int duration) {
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
+
+  lightUpLed(lednumber);
+  _delay_ms(duration);
+  lightDownLed(lednumber);
+  _delay_ms(duration);
 }

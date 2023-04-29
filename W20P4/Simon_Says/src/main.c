@@ -17,38 +17,36 @@
 
 int button_pushed = 0;
 int teller = 0;
+int status = 1;
 
 ISR(PCINT1_vect) {
-  if (buttonPushed(0) || buttonPushed(1) || buttonPushed(2)) { button_pushed = !button_pushed; }
+  if (buttonPushed(0)) button_pushed = !button_pushed;
 }
 
 void opstart() {
-  printf("Druk op één van de 3 knoppen voor het spel te starten\n");
+  printf("\nDruk op knop1 om het spel te starten\n");
   while (!button_pushed) {
-    if (button_pushed) { lightDownLed(3); } 
-    else { 
-      lightUpLed(3);
-      DELAY;
-      lightDownLed(3);
-      DELAY;
+    if (button_pushed) lightDownLed(3);
+    else {
+      flashLed(3, 500);
       teller++;
     }
   }
 }
 
 void generatePuzzle(uint8_t* pointer, int len) {
-  for (int i = 0; i <= len; i++) { pointer[i] = rand() % 3; }
+  for (int i = 0; i < len; i++) pointer[i] = rand() % 3;
 }
 
 void printPuzzle(uint8_t* pointer, int len) {
   printf("De oplossing -> [");
-  for (int i = 0; i <= len; i++) { printf("%d ", pointer[i]); }
+  for (int i = 0; i < len; i++) printf("%d ", pointer[i]);
   printf("]\n");
 }
 
 void playPuzzle(uint8_t* pointer, int len) {
   printf("Simon Says:\n");
-  for (int i = 0; i <= len; i++) {
+  for (int i = 0; i < len; i++) {
     lightUpLed(pointer[i]);
     DELAY;
     lightDownLed(pointer[i]);
@@ -61,27 +59,51 @@ int readInput(uint8_t* pointer, int len) {
   int index = 0;
   while (1) {
     if (buttonPushed(0)) {
-      if (pointer[index] == 0) { index++; }
-      else { return 0; }
+      if (pointer[index] == 0) index++;
+      else return 0;
       DELAY;
     }
     if (buttonPushed(1)) {
-      if (pointer[index] == 1) { index++; }
-      else { return 0; }
+      if (pointer[index] == 1) index++;
+      else return 0;
       DELAY;
     }
     if (buttonPushed(2)) {
-      if (pointer[index] == 2) { index++; }
-      else { return 0; }
+      if (pointer[index] == 2) index++;
+      else return 0;
       DELAY;
     }
-    if (index == len + 1) { return 1; }
+    if (index == len + 1) return 1;
   }
+}
+
+void gameLoop(uint8_t* pointer, int len) {
+  for (int i = 0; i < len; i++) {
+
+    // Opgave 4: Afspelen van de puzzle.
+    playPuzzle(pointer, i);
+
+    // Opgave 5: Uitlezen van de input van de gebruiker.
+    status = readInput(pointer, i);
+
+    // Opgave 6: Het volledige spel
+    if (status == 0) {
+      printf("Fout, het juiste patroon was: [");
+      for (int j = 0; j < i; j++) printf("%d ", pointer[j]);
+      printf("]\n");
+      break;
+    }
+    else {
+      printf("Correct, we gaan naar level %d\n", (i + 1));
+      flashLed(3, 500);
+    }
+  }
+  cli();
 }
 
 int main() {
   // Standaard config.
-  initUSART(); // Ervoor zorgen dat je printf(); kan gebruiken.
+  initUSART(); // Zorgen dat je printf(); kan gebruiken.
   enableAllLeds();
   enableAllButtons();
   enableAllButtonInterrupts();
@@ -98,15 +120,10 @@ int main() {
   generatePuzzle(reeks, sizeof(reeks));
   printPuzzle(reeks, sizeof(reeks));
 
-  // Opgave 4: Afspelen van de puzzle.
-  playPuzzle(reeks, sizeof(reeks));
-
-  // Opgave 5: Uitlezen van de input van de gebruiker.
-  int status = readInput(reeks, sizeof(reeks));
-
-  // Opgave 6: Het volledige spel
-  if (status) { printf("Gefeliciteerd, je hebt alles juist!!!"); }
-  else { printf("Je hebt een fout gemaakt!!!"); }
-
+  // Opgave 4, 5 en 6: Game Loop
+  gameLoop(reeks, sizeof(reeks));
+  
+  if (status) printf("Proficiat, je bent de Simon Master!");
+  
   return 0;
 }

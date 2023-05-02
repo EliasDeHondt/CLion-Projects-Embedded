@@ -85,10 +85,14 @@ void flipLed(int lednumber) {
 }
 
 void flashLed(int lednumber, int duration) {
+  int numFlickers = 5;
   if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
 
-  lightUpLed(lednumber);
-  _delay_ms(duration);
-  lightDownLed(lednumber);
-  _delay_ms(duration);
+  int flickerDuration = duration / numFlickers;
+  for(int i = 0; i < numFlickers; i++) {
+    lightUpLed(lednumber);
+    _delay_ms(flickerDuration);
+    lightDownLed(lednumber);
+    _delay_ms(flickerDuration);
+  }
 }

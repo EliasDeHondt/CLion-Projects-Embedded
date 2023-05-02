@@ -2,6 +2,51 @@
 	"folders": [
 		{
 			"path": "../libraries"
+		},
+		{
+			"name": "Potentiometer",
+			"path": "Potentiometer"
+		},
+		{
+			"name": "Using_The_Display_Library",
+			"path": "Using_The_Display_Library"
+		},
+		{
+			"name": "Geheugenmanagement",
+			"path": "Geheugenmanagement"
+		},
+		{
+			"name": "Scrolling_Numbers",
+			"path": "Scrolling_Numbers"
+		},
+		{
+			"name": "Alphabet_On_Display",
+			"path": "Alphabet_On_Display"
+		},
+		{
+			"name": "Potentiometer_On_Display",
+			"path": "Potentiometer_On_Display"
+		},
+		{
+			"name": "Stack_En_Heap_Strafwerk",
+			"path": "Stack_En_Heap_Strafwerk"
+		},
+		{
+			"name": "Nim",
+			"path": "Nim"
+		},
+		{
+			"name": "Potentio_Dims_Leds",
+			"path": "Potentio_Dims_Leds"
 		}
-	]
+	],
+	"settings": {
+		"files.associations": {
+			"delay.h": "c",
+			"io.h": "c",
+			"usart.h": "c",
+			"type_traits": "c",
+			"xtr1common": "c"
+		}
+	}
 }

@@ -46,7 +46,12 @@
 			"io.h": "c",
 			"usart.h": "c",
 			"type_traits": "c",
-			"xtr1common": "c"
+			"xtr1common": "c",
+			"string.h": "c",
+			"potentio.h": "c",
+			"display.h": "c",
+			"button.h": "c",
+			"stdlib.h": "c"
 		}
 	}
 }

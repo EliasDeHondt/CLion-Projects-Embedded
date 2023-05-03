@@ -83,11 +83,9 @@ void writeNumberAndWait(int number, int delay) {
 
 void writeCharToSegment(uint8_t segment, char character) {
   if (character >= 'a' && character <= 'z') character -= 32; // (van 'a' tot 'z') naar (van 'A' tot 'Z')
-
   uint8_t value;
   if (character < 'A' || character > 'Z') value = SPACE; // Als het geen (van 'A' tot 'Z')
   else value = ALPHABET_MAP[(character - 'A')];
-
   cbi(PORTD, LATCH_DIO);
   shift(value, MSBFIRST);
   shift(SEGMENT_SELECT[segment], MSBFIRST);
@@ -97,14 +95,12 @@ void writeCharToSegment(uint8_t segment, char character) {
 void writeString(char* str) {
   int lengte = strlen(str);
   if (lengte > 4) lengte = 4; // Alleen 4 laten zien
-  
   for (int  i = 0; i < lengte; i++) writeCharToSegment(i, str[i]);
 }
 
 void writeStringAndWait(char* str, int delay) {
   int lengte = strlen(str);
   if (lengte > 4) lengte = 4; // Alleen 4 laten zien
-
   for (int i = 0; i < delay / 20; i++) {
     for (int j = 0; j < lengte; j++) {
       writeCharToSegment(j, str[j]);
@@ -115,7 +111,40 @@ void writeStringAndWait(char* str, int delay) {
 
 void scrollingString(char* str, int delay) {
   int lengte = strlen(str);
-  for (int i = 0; i < (lengte - 3); i++) {
-    writeStringAndWait(&str[i], delay);
-  }
+  for (int i = 0; i < (lengte - 3); i++) writeStringAndWait(&str[i], delay);
+}
+
+// Van Elias :-)
+void writeToSegment(uint8_t segment, uint8_t value) {
+  cbi(PORTD, LATCH_DIO);
+  shift(value, MSBFIRST);
+  shift(SEGMENT_SELECT[segment], MSBFIRST);
+  sbi(PORTD, LATCH_DIO);
+}
+
+void ledLus() {
+  writeToSegment(0, 0b11011111);
+  DELAYE;
+  writeToSegment(0, 0b11101111);
+  DELAYE;
+  writeToSegment(0, 0b11110111);
+  DELAYE;
+  writeToSegment(1, 0b11110111);
+  DELAYE;
+  writeToSegment(2, 0b11110111);
+  DELAYE;
+  writeToSegment(3, 0b11110111);
+  DELAYE;
+  writeToSegment(3, 0b11111011);
+  DELAYE;
+  writeToSegment(3, 0b11111101);
+  DELAYE;
+  writeToSegment(3, 0b11111110);
+  DELAYE;
+  writeToSegment(2, 0b11111110);
+  DELAYE;
+  writeToSegment(1, 0b11111110);
+  DELAYE;
+  writeToSegment(0, 0b11111110);
+  DELAYE;
 }

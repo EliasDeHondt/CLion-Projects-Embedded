@@ -14,6 +14,9 @@
 #define sbi(register, bit) (register |= _BV(bit))
 #define cbi(register, bit) (register &= ~_BV(bit))
 
+// Van Elias :-)
+#define DELAYE _delay_ms(100);
+
 void initDisplay();
 void writeNumberToSegment(uint8_t segment, uint8_t value);
 void writeNumber(int number);
@@ -24,3 +27,7 @@ void writeString(char* str);
 void writeStringAndWait(char* str, int delay);
 
 void scrollingString(char* str, int delay);
+
+// Van Elias :-)
+void writeToSegment(uint8_t segment, uint8_t value);
+void ledLus();

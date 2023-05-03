@@ -4,6 +4,13 @@
  * @since 02/05/2023
  */
 
+#include <avr/io.h>
+#include <util/delay.h>
+#include <usart.h>
+#include <string.h>
+#include <button.h>
+#include <stdlib.h>
+
 /*
 Jantje is stout geweest in de les en moet van de meester 100 keer de zin 
 "Ik mag niet praten in de les" op bord schrijven. Jantje is een slim kereltje en vraagt of het ok is als hij een 
@@ -45,3 +52,25 @@ Verwachte output:
   Op heap zijn nu 1560 bytes bezet...
   ...
 */
+
+char str[] = "Ik mag niet praten in de les.";
+
+void schrijfStrafOpHeap(char zin[]) {
+    int lengte = strlen(zin);
+
+}
+
+int main() {
+  initUSART();
+  enableButton(0);
+  
+  while (1) if (buttonPushed(0)) {
+    for (int i = 1; i <= 100; i++) {
+        printf("%d:%s\n", i, str);
+        
+        //schrijfStrafOpHeap(str);
+    }
+
+  }
+  return 0;
+}

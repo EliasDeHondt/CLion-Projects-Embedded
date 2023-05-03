@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "IntegratieProject",
+			"path": "IntegratieProject"
+		},
+		{
+			"path": "../libraries"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"interrupt.h": "c",
+			"display.h": "c"
+		}
+	}
+}

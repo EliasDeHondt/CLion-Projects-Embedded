@@ -11,7 +11,6 @@
 #include <usart.h>
 #include <led.h>
 #include <button.h>
-#include <usart.h>
 
 #define DELAY _delay_ms(500)
 

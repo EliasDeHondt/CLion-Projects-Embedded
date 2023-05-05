@@ -8,22 +8,26 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 #include <usart.h>
 #include <led.h>
 #include <button.h>
 #include <display.h>
+#include <potentio.h>
 
-#define BUTTONDELAY _delay_ms(200);
+#define BUTTONDELAY _delay_ms(500);
 
-uint8_t button_pushed = 0;
-uint8_t points = 0;
-uint8_t pawn = 0;
+uint8_t button_pushed = 0; // Boolean
+uint8_t live = 4;
+uint8_t pawn;
 uint8_t display = 1;
-uint8_t moveDown = 0;
-uint8_t down = 2;
+uint8_t moveDown = 0; // Boolean
+uint8_t down = 2; // Boolean
 uint8_t teller = 0;
-int seed;
+uint16_t seed;
+uint8_t score = 0; // The score is increased by 1 after each round.
 
 void initializing() { // Default configuration and initialization.
   initUSART();
@@ -31,29 +35,43 @@ void initializing() { // Default configuration and initialization.
   enableAllLeds();
   lightDownAllLeds();
   enableAllButtons();
-  enableButtonInterrupt(1); // Pause game.
-  printf("Basic initialization completed.\n"); // Serial feedback.
+  printString("Basic initialization completed.\n"); // Serial feedback.
+}
+
+void startup() {
+  printString("Draai aan de potentiometer en druk op een knop naar keuze om het spel te starten.\n"); // Serial feedback.
+  while (1) {
+    if (buttonPushed(0) || buttonPushed(1) || buttonPushed(2)) {
+      seed = readPotentio(); // 0 ... 1023
+      srand(seed);
+      BUTTONDELAY;
+      break;
+    }
+  }
+}
+
+void gameOver() { // This method is responsible for the conclusion of the game.
+  if (score <= 4) printf("Game Over!!!\n%d points: not bad", score); // Serial feedback.
+  else if (score > 4 && score <= 10) printf("Game Over!!!\n%d points: you are so great!", score); // Serial feedback.
+  else if (score > 10) printf("Game Over!!!\n%d points: thats amazing!”", score); // Serial feedback.
+  scrollingString("eindscore", 1000);
+  while(1) ledLus();
 }
 
 ISR(PCINT1_vect) { // Method that is responsible for all interruptions.
   if (buttonPushed(1)) button_pushed = !button_pushed;
 }
 
-void won() { // This method is responsible for the conclusion of the game.
-  printString("You won!!!\n"); // Serial feedback.
-  while(1) ledLus();
-}
-
-void addPoint() { // The name of the function is self-explanatory :).
-  points++;
-  printf("One point has been added. Number of points: %d\n", points); // Serial feedback.
+void subtractLive() { // The name of the function is self-explanatory :).
+  live--;
+  printf("One live has been subtracted. Number of live: %d\n", live); // Serial feedback.
 }
 
 void initializeLedCounter() { // Ensures that the 4 LEDs always display the correct value.
-  if (points == 0) lightDownAllLeds(); // Default behavior.
-  if (points <= 4) {
-    flashLed((points-1), 1000);
-    lightUpLed((points-1));
+  if (live == 4) lightUpAllLeds(); // Default behavior.
+  if (live <= 3) {
+    flashLed(live, 1000);
+    lightDownLed(live);
   }
 }
 
@@ -80,7 +98,6 @@ void printLed() { // Method that is responsible for showing the correct info on 
 
 void moveEnemy() {
   if (moveDown == 0) { // (A | G | D)
-    srand(seed);
     uint8_t horizontal = rand() % 2; // van 0 tot 1
     if (horizontal == 0 && display > 0) display = display - 1; // Move to the left (Computer).
     if (horizontal == 1 && display < 3) display = display + 1; // Move to the right (Computer).
@@ -93,45 +110,45 @@ void moveEnemy() {
     teller++;
     moveDown = !moveDown;
   }
-  printLed();
+  printLed(); // Is a bit redundant, But it looks better.
 }
 
 void gameLoop() {
   if (buttonPushed(0)) { // Move to the left (Player).
-    if (pawn > 0) {
-      pawn--;
-      moveEnemy();
-    }
+    if (pawn > 0) pawn--;
+    moveEnemy();
     BUTTONDELAY;
   }
   if (button_pushed) { // Pause game.
-    printf("The game is paused.\n"); // Serial feedback.
+    printString("The game is paused.\n"); // Serial feedback.
     BUTTONDELAY;
     while (button_pushed) ledLus();
     BUTTONDELAY;
   }
   if (buttonPushed(2)) { // Move to the right (Player).
-    if (pawn < 3) {
-      pawn++;
-      moveEnemy();
-    }
+    if (pawn < 3) pawn++;
+    moveEnemy();
     BUTTONDELAY;
   }
-  seed++; // To generate random numbers at all times.
   printLed();
 }
 
 int main() {
   initializing();
   initializeLedCounter();
+  startup();
+  enableButtonInterrupt(1); // Pause game.
   while (1) {
     gameLoop();
     if (pawn == display && teller == 5) {
-      addPoint();
+      subtractLive();
       initializeLedCounter();
-      if (points == 4) won();
+      if (live == 0) gameOver();
     }
-    if(teller == 5) teller = 0;
+    if(teller == 5) {
+      teller = 0; // When the rocket is all the way down, causes the game to restart.
+      score++;
+    }
   }
   return 0;
 }

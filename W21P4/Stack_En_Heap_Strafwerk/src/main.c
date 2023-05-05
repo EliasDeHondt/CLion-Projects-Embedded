@@ -53,24 +53,29 @@ Verwachte output:
   ...
 */
 
-char str[] = "Ik mag niet praten in de les.";
+int aantalBytes = 0;
 
 void schrijfStrafOpHeap(char zin[]) {
-    int lengte = strlen(zin);
-
+  int lengte = strlen(zin);
+  char* zinH = malloc((lengte + 1) * sizeof(char));
+  strcpy(zinH, zin);
+  printString("\"Ik mag niet praten in de les.\" staat op heap...\n");
+  aantalBytes += (lengte + 1);
+  printf("Op heap zijn nu %d bytes bezet...\n", aantalBytes);
+  //free(zinH);
 }
 
 int main() {
   initUSART();
   enableButton(0);
+
+  char zin[] = "Ik mag niet praten in de les.";
   
   while (1) if (buttonPushed(0)) {
     for (int i = 1; i <= 100; i++) {
-        printf("%d:%s\n", i, str);
-        
-        //schrijfStrafOpHeap(str);
+        printf("%d:%s\n", i, zin);
+        schrijfStrafOpHeap(zin);
     }
-
   }
   return 0;
 }

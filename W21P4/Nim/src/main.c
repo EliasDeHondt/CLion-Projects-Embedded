@@ -13,14 +13,16 @@
 #include <potentio.h>
 #include <display.h>
 
-uint16_t seed = 0;
-int beschikbaarAantal;
-int minAantal = 1;
-int maxAantal;
-int p_aantal = 1;
-int c_aantal;
-int berekening = 1;
-char speler;
+#define DELAY _delay_ms(500);
+
+uint8_t beschikbaarAantal = 21; // The number of available matches.
+uint8_t p_aantal = 1; // Number chosen by the player (Default 1).
+uint8_t c_aantal; // Number chosen by the computer.
+uint8_t berekening = 1; // boolean
+uint8_t teller = 0; // Keeps track of which round of the game it is.
+char speler; // P of C
+char* spelDataSpeler[21];
+int* spelDataAantal[21];
 
 void initializing() { // Default configuration and initialization.
   initUSART();
@@ -30,20 +32,44 @@ void initializing() { // Default configuration and initialization.
   printf("Basic initialization completed.\n"); // Serial feedback.
 }
 
+void writeOnHeab() {
+    if (speler == 'C') {
+        spelDataSpeler[teller] = malloc(strlen("Computer") + 1);
+        strcpy(spelDataSpeler[teller], "Computer");
+
+        spelDataAantal[teller] = malloc(sizeof(uint8_t));
+        *(spelDataAantal[teller]) = c_aantal;  // waarde toewijzen aan de uint8_t door middel van dereferencing 
+    }
+    if (speler == 'P') {
+        spelDataSpeler[teller] = malloc(strlen("Player") + 1);
+        strcpy(spelDataSpeler[teller], "Player");
+
+        spelDataAantal[teller] = malloc(sizeof(uint8_t));
+        *(spelDataAantal[teller]) = p_aantal;  // waarde toewijzen aan de uint8_t door middel van dereferencing
+    }
+    printString("Game data is transferred to the head.\n");
+}
+
+void readTheHeab() {
+    for (uint8_t i = 0; i < teller; i++) {
+        // %hhu is een formaatspecificatie die gebruikt wordt in C om een unsigned char of uint8_t variabele te formatteren.
+        printf("%s took %hhu matches on turn %hhu.\n", spelDataSpeler[i], *spelDataAantal[i], (i+1));
+        free(spelDataSpeler[i]);
+        free(spelDataAantal[i]);
+    }
+}
+
 void startSpel() { // Deze methode is verantwoordelijk voor de opstart van het spel en de seed.
     printf("Gelieve een waarde te kiezen via de potentiometer.\n");
     while (1) {
         if (buttonPushed(0)) {
-        seed = readPotentio(); // 0 ... 1023
-        srand(seed);
-        beschikbaarAantal = (rand() % 79) + 21; // 21, 22, ..., 99
-        // Controleer of maxAantal niet meer is dan een vijfde van beschikbaarAantal
-        maxAantal = (rand() % (beschikbaarAantal / 5 - 2)) + 3; // 3, 4, ..., beschikbaarAantal / 5
-        writeNumberAndWait(seed, 1000);
-        printf("De waarde van (beschikbaarAantal): %d\n", beschikbaarAantal);
-        printf("De waarde van (maxAantal): %d\n", maxAantal);
-        printf("Potentiometer waarde: %d\n", seed);
-        break;
+            uint16_t potentioValue = readPotentio(); // 0 ... 1023
+            float seed = (float)potentioValue / 1023.0 * 9999.0;
+            srand(seed);
+            writeNumberAndWait((int)seed, 1000);
+            printf("Potentiometer waarde: %d\n", potentioValue);
+            printf("Seed waarde: %d\n", (int)seed);
+            break; 
         }
     }
 }
@@ -68,24 +94,37 @@ void LedDisplays() {
     writeNumberToSegment(3, beschikbaarAantal  % 10);
 }
 
+void gewonnen() {
+    printf("Gefeliciteerd speler %c heeft gewonnen.\n", speler);
+    readTheHeab();
+    while (1) ledLus();
+}
+
 void verloopSpel() {
+    uint8_t minAantal = 1; // The minimum number of matches you can grab.
+    uint8_t maxAantal = 3; // The maximum number of matches you can grab.
     if (speler == 'P') {
         if (buttonPushed(0)) {
             if (p_aantal != minAantal) p_aantal--; // Er wordt 1 bij het p_aantal afgetrokken wanneer het niet kleiner  is dan minAantal aantal.
-            _delay_ms(500);
+            DELAY;
         }
         if (buttonPushed(1)) {
             if (beschikbaarAantal  >= p_aantal) {
                 beschikbaarAantal  = beschikbaarAantal  - p_aantal;
                 printf("De player heeft het volgende aantal gekozen: %d\n", p_aantal);
+                writeOnHeab();
+                teller++;
                 kiesSpeler();
+                DELAY;
             }
-            printf("Het gekozen aantal is te hoog of te laag.\n");
-            _delay_ms(500);
+            else {
+                printf("Het gekozen aantal is te hoog of te laag.\n");
+                DELAY;
+            }
         }
         if (buttonPushed(2)) {
             if (p_aantal != maxAantal) p_aantal++; // Er wordt 1 bij het p_aantal geteld wanneer het niet groter is dan maxAantal aantal.
-            _delay_ms(500);
+            DELAY;
         }
     }
     if (speler == 'C') {
@@ -95,21 +134,16 @@ void verloopSpel() {
             else c_aantal = Clogica;
             berekening = !berekening;  // Zodat de computer logica maar eenmalig wordt uitgevoerd.
         }
-
         if (buttonPushed(1)) {
             beschikbaarAantal = beschikbaarAantal - c_aantal;
             printf("De computer heeft het volgende aantal gekozen: %d\n", c_aantal);
+            writeOnHeab();
+            teller++;
             kiesSpeler();
-            _delay_ms(500);
+            DELAY;
         }
     }
     LedDisplays();
-}
-
-void gewonnen() {
-    printf("Gefeliciteerd speler %c heeft gewonnen.", speler);
-    // ToDo print geheugen?
-    while (1) ledLus();
 }
 
 int main()  {

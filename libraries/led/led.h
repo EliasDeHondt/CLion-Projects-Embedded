@@ -28,3 +28,8 @@ void fadeOutLed(int lednumber, int duration);
 void flipLed(int lednumber);
 
 void flashLed(int lednumber, int duration);
+
+// Van Elias :-)
+void heartbeat(int duration);
+
+void countdown();

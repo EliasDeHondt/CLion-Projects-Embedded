@@ -16,8 +16,17 @@
 #include <button.h>
 #include <display.h>
 #include <potentio.h>
+#include <buzzer.h>
+#include <timer.h>
 
 #define BUTTONDELAY _delay_ms(500);
+
+typedef struct { // TODO
+  uint16_t volgnr;
+  uint16_t gemisteAanvallen;
+  float minuten;
+  float seconden;
+} RONDE;
 
 uint8_t button_pushed = 0; // Boolean
 uint8_t live = 4;
@@ -32,18 +41,23 @@ uint8_t score = 0; // The score is increased by 1 after each round.
 void initializing() { // Default configuration and initialization.
   initUSART();
   initDisplay();
+  displayOff();
   enableAllLeds();
   lightDownAllLeds();
   enableAllButtons();
+  enableBuzzer();
   printString("Basic initialization completed.\n"); // Serial feedback.
 }
 
 void startup() {
   printString("Draai aan de potentiometer en druk op een knop naar keuze om het spel te starten.\n"); // Serial feedback.
-  while (1) {
+  while (1) { // Player has not started the game yet.
+    heartbeat(400);
     if (buttonPushed(0) || buttonPushed(1) || buttonPushed(2)) {
       seed = readPotentio(); // 0 ... 1023
       srand(seed);
+      countdown();
+      startTone(); // Small sound to indicate that the game is about to start.
       BUTTONDELAY;
       break;
     }
@@ -63,6 +77,7 @@ ISR(PCINT1_vect) { // Method that is responsible for all interruptions.
 }
 
 void subtractLive() { // The name of the function is self-explanatory :).
+  negativeTone();
   live--;
   printf("One live has been subtracted. Number of live: %d\n", live); // Serial feedback.
 }
@@ -135,8 +150,8 @@ void gameLoop() {
 
 int main() {
   initializing();
-  initializeLedCounter();
   startup();
+  initializeLedCounter(); // Set up the life counter.
   enableButtonInterrupt(1); // Pause game.
   while (1) {
     gameLoop();
@@ -144,10 +159,12 @@ int main() {
       subtractLive();
       initializeLedCounter();
       if (live == 0) gameOver();
+      teller = 0; // Set counter to zero for a new round.
     }
-    if(teller == 5) {
-      teller = 0; // When the rocket is all the way down, causes the game to restart.
-      score++;
+    if (teller == 5) {
+      score++; // Player has completed a round.
+      teller = 0; // Set counter to zero for a new round.
+      positiveTone();
     }
   }
   return 0;

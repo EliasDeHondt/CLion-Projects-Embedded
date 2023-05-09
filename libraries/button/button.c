@@ -34,6 +34,7 @@ int buttonReleased(int button) {
 }
 
 // Enable Interrupt
+/*
 void enableButtonInterrupt(int button) {
   if ((button + 1) < 0 || (button + 1) > 2) return -1; // 0, 1 of 2 (3 button)
   PCICR |= (1 << PCIE1);
@@ -43,4 +44,18 @@ void enableButtonInterrupt(int button) {
 
 void enableAllButtonInterrupts() {
   for (int i = 1; i <= 3; i++) enableButtonInterrupt(i);
+}
+*/
+
+void enableButtonInterrupt(int button){
+  if (button < 3) { // O, 1 en 2
+    button += 1;
+    PCICR |= (1 << PCIE1);
+    PCMSK1 |= (1 << button);
+    sei(); // Set enable interrupt
+  }
+}
+
+void enableAllButtonInterrupts(){ 
+  for (int i = 0; i < 3; i++) enableButtonInterrupt(i); // O, 1 en 2
 }

@@ -32,3 +32,4 @@ void scrollingString(char* str, int delay);
 // Van Elias :-)
 void writeToSegment(uint8_t segment, uint8_t value);
 void ledLus();
+void displayOff();

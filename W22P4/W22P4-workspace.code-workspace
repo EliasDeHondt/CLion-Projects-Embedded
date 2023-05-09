@@ -2,6 +2,45 @@
 	"folders": [
 		{
 			"path": "../libraries"
+		},
+		{
+			"name": "Play_Music",
+			"path": "Play_Music"
+		},
+		{
+			"name": "Structures",
+			"path": "Structures"
+		},
+		{
+			"name": "Structures_Dynamisch",
+			"path": "Structures_Dynamisch"
+		},
+		{
+			"name": "Timers",
+			"path": "Timers"
+		},
+		{
+			"name": "SpaceX_HLS",
+			"path": "SpaceX_HLS"
+		},
+		{
+			"name": "Mijn_synthesizer",
+			"path": "Mijn_synthesizer"
+		},
+		{
+			"name": "Wolfgang_Arduino_Mozart",
+			"path": "Wolfgang_Arduino_Mozart"
+		},
+		{
+			"name": "Stopwatch_Maken",
+			"path": "Stopwatch_Maken"
 		}
-	]
+	],
+	"settings": {
+		"files.associations": {
+			"interrupt.h": "c",
+			"button.h": "c",
+			"delay.h": "c"
+		}
+	}
 }

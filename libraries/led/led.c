@@ -96,3 +96,19 @@ void flashLed(int lednumber, int duration) {
     _delay_ms(flickerDuration);
   }
 }
+
+// Van Elias :-)
+void heartbeat(int duration) {
+  lightUpAllLeds();
+  _delay_ms(duration / 2);
+  lightDownAllLeds();
+  _delay_ms(duration / 2);
+}
+
+void countdown() {
+  lightUpAllLeds();
+  for (int i = 3; i >= 0; i--) {
+    _delay_ms(500);
+    lightDownLed(i);
+  }
+}

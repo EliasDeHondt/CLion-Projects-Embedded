@@ -148,3 +148,7 @@ void ledLus() {
   writeToSegment(0, 0b11111110);
   DELAYE;
 }
+
+void displayOff() {
+  for (int i = 0; i < 4; i++) writeToSegment(i, SPACE);
+}

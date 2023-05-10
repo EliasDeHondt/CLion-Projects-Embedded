@@ -4,29 +4,31 @@
  * @since 01/05/2023
  */
 
-#include <util/delay.h>
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
+#include <util/delay.h>    // Provides delay functions for time-sensitive operations.
+#include <avr/io.h>        // Provides access to the I/O pins of the AVR microcontroller.
+#include <avr/interrupt.h> // Provides functions for handling interrupts.
+#include <stdlib.h>        // Provides standard library functions, such as memory allocation and random number generation.
+#include <unistd.h>        // Provides access to POSIX operating system API functions.
+#include <string.h>        // Provides functions for manipulating strings.
 
-#include <usart.h>
-#include <led.h>
-#include <button.h>
-#include <display.h>
-#include <potentio.h>
-#include <buzzer.h>
-#include <timer.h>
+#include <usart.h>         // Provides functions for communicating over a USART serial port.
+#include <led.h>           // Provides functions for controlling LEDs.
+#include <button.h>        // Provides functions for detecting button presses.
+#include <display.h>       // Provides functions for controlling a display screen.
+#include <potentio.h>      // Provides functions for reading analog input from a potentiometer.
+#include <buzzer.h>        // Provides functions for controlling a buzzer.
+#include <timer.h>         // Provides functions for setting up and controlling timers.
+
 
 #define BUTTONDELAY _delay_ms(500);
+#define MULTIPLE 250
 
-typedef struct { // TODO
-  uint16_t volgnr;
-  uint16_t gemisteAanvallen;
-  float minuten;
-  float seconden;
-} RONDE;
+typedef struct {
+  uint16_t followNumber;
+  uint16_t missedattacks;
+  uint16_t minutes;
+  uint16_t seconds;
+} ROUND;
 
 // Global variables.
 uint8_t button_pushed = 0; // Boolean.
@@ -37,6 +39,8 @@ uint8_t moveDown = 0; // Boolean.
 uint8_t down = 2; // Boolean.
 uint8_t teller = 0;
 uint8_t score = 0; // The score is increased by 1 after each round.
+uint32_t counter = 0;
+uint16_t seconds = 0; // Seconds per round.
 
 void initializing() { // Default configuration and initialization.
   initUSART();
@@ -46,11 +50,12 @@ void initializing() { // Default configuration and initialization.
   lightDownAllLeds();
   enableAllButtons();
   enableBuzzer();
+  enableTimer2();
   printString("Basic initialization completed.\n"); // Serial feedback.
 }
 
 void startup() {
-  printString("Draai aan de potentiometer en druk op een knop naar keuze om het spel te starten.\n"); // Serial feedback.
+  printString("Turn the potentiometer and press a button of your choice to start the game.\n"); // Serial feedback.
   while (1) { // Player has not started the game yet.
     heartbeat(400);
     if (buttonPushed(0) || buttonPushed(1) || buttonPushed(2)) {
@@ -58,18 +63,52 @@ void startup() {
       srand(seed);
       countdown();
       startTone(); // Small sound to indicate that the game is about to start.
+      startTimer2();
       BUTTONDELAY;
       break;
     }
   }
 }
 
-void gameOver() { // This method is responsible for the conclusion of the game.
-  if (score <= 4) printf("Game Over!!!\n%d points: not bad", score); // Serial feedback.
-  else if (score > 4 && score <= 10) printf("Game Over!!!\n%d points: you are so great!", score); // Serial feedback.
-  else if (score > 10) printf("Game Over!!!\n%d points: thats amazing!”", score); // Serial feedback.
+void accessHeap(ROUND* rounds, uint8_t read) { //
+  if (read) { // Read From Heap.
+    for (uint8_t i = 0; i < 4; i++) {
+      printf("FollowNumber: %d \t Missedattacks: %d \t", rounds[i].followNumber, rounds[i].missedattacks);
+      printf("Minutes: %d \t Seconds: %d\n", rounds[i].minutes, rounds[i].seconds);
+    }
+  } 
+  else { // Write To Heap
+    // Calculate the score for the current round
+    uint8_t total_missedattacks = 0;
+    for (uint8_t i = 0; i < 4; i++) total_missedattacks += rounds[i].missedattacks;
+    uint8_t current_round_score = score - total_missedattacks;
+    // Update the current round data in the heap
+    for (uint8_t i = 0; i < 3; i++) {
+      rounds[i] = rounds[i+1];
+      rounds[i].followNumber = i + 1;
+    }
+    rounds[3].followNumber = 4;
+    rounds[3].missedattacks = current_round_score;
+    rounds[3].minutes = seconds / 60;
+    rounds[3].seconds = seconds % 60;
+  }
+}
+
+void gameOver(ROUND* rounds) { // This method is responsible for the conclusion of the game.
+  printString("Gameplay:\n"); // Serial feedback.
+  accessHeap(rounds, 1); // Read From Heap.
+
+  int totalTime = 0;
+  for (uint8_t i = 0; i < 4; i++) totalTime = totalTime + rounds[i].seconds;
+  printf("Total time: %d\n", totalTime); // Serial feedback.
+
+  printf("Personalized message:\t%d points: %s\n", score, score <= 4 ? "not bad" : (score > 4 && score <= 10 ? "you are so great!" : "thats amazing!")); // Serial feedback.
+
   scrollingString("eindscore", 1000);
-  while(1) ledLus();
+  stopTimer2(); // Shutting down game timer.
+  free(rounds); // free heap.
+  printString("Press the restart button to play again.\n");
+  while(1) ledLus(); // Endless Light Show does not stop ()
 }
 
 ISR(PCINT1_vect) { // Method that is responsible for all interruptions.
@@ -128,10 +167,18 @@ void moveEnemy() {
   printLed(); // Is a bit redundant, But it looks better.
 }
 
+ISR(TIMER2_COMPA_vect) { // This ISR runs every 4ms. Timer Interrupt.
+  counter++; // Increase counter by 1.
+  // Als counter + 1 deelbaar is door VEELVOUD tel één seconde.
+  if (counter % MULTIPLE == 0) { // If counter + 1 is divisible by MULTIPLE count one second.
+    moveEnemy();
+    seconds++;
+  }
+}
+
 void gameLoop() {
   if (buttonPushed(0)) { // Move to the left (Player).
     if (pawn > 0) pawn--;
-    moveEnemy();
     BUTTONDELAY;
   }
   if (button_pushed) { // Pause game.
@@ -142,7 +189,6 @@ void gameLoop() {
   }
   if (buttonPushed(2)) { // Move to the right (Player).
     if (pawn < 3) pawn++;
-    moveEnemy();
     BUTTONDELAY;
   }
   printLed();
@@ -153,17 +199,20 @@ int main() {
   startup();
   initializeLedCounter(live); // Set up the life counter.
   enableButtonInterrupt(1); // Pause game.
+  ROUND* rounds = calloc(4, sizeof(ROUND)); // Reserving 4 rounds In the heap.
   while (1) {
     gameLoop();
-    if (pawn == display && teller == 5) {
+    if (pawn == display && teller == 5) { // Next round is initiated.
       subtractLive();
+      accessHeap(rounds, 0); // Write To Heap.
       initializeLedCounter();
-      if (live == 0) gameOver();
-      teller = 0; // Set counter to zero for a new round.
+      if (live == 0) gameOver(rounds);
+      teller = 0; // Set counter to zero.
+      seconds = 0;
     }
-    if (teller == 5) {
+    else if (teller == 5) { // Keeping the same round.
       score++; // Player has completed a round.
-      teller = 0; // Set counter to zero for a new round.
+      teller = 0; // Set counter to zero.
       positiveTone();
     }
   }

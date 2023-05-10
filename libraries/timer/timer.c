@@ -8,19 +8,19 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-void initTimer0() {
-    // STAP 1: kies de WAVE FORM en dus de Mode of Operation
-    // Hier kiezen we FAST PWM waardoor de TCNT0 steeds tot 255 telt
-    TCCR0A |= (1 << (WGM00)) | (1 << (WGM01)); // WGM00 = 1 en WGM01 = 1 --> Fast PWM Mode
+void enableTimer2() { // 
+    TCCR2A |= (1 << (WGM21)); // Clear Timer on Compare Mode.
+    OCR2A = 250; // Zet de compare match waarde op 250 (OCR2A = 250).
+    TIMSK2 |= (1 << (OCIE2A)); // OCRA interrupt enablen.
+    sei(); // Interrupts globaal enablen.
+}
 
-    // STAP 2: stel *altijd* een PRESCALER in, anders telt hij niet.
-    // De snelheid van tellen wordt bepaald door de CPU-klok (16Mhz) gedeeld door deze factor.
-    TCCR0B |= (1 << (CS02)) | (1 << (CS00)); // CS02 = 1 en CS00 = 1 --> prescalerfactor is nu 1024 (=elke 64µs)
+void startTimer2() {
+    TCCR2B |= (1 << (CS22)) | (1 << (CS21)); // Schalingsfactor = 256. (startTimer)
+    printString("Timer Start\n");
+}
 
-    // STAP 3: enable INTERRUPTs
-    // Enable interrupts voor twee gevallen: TCNT0 == TOP en TCNT0 == OCR0A
-    TIMSK0 |= (1 << (TOIE0)); // overflow interrupt enablen
-    TIMSK0 |= (1 << (OCIE0A)); // OCRA interrupt enablen
-
-    sei(); // interrupts globaal enablen
+void stopTimer2() {
+    TCCR2B = (0 << (CS22)) | (0 << (CS21)) | (0 << (CS20)); // Schalingsfactor = 0.
+    printString("Timer Stop\n");
 }

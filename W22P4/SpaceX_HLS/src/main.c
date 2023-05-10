@@ -16,6 +16,7 @@
 #include <button.h>
 #include <display.h>
 #include <buzzer.h>
+#include <timer.h>
 
 #define VEELVOUD 250
 #define MAXFUEL 1500
@@ -39,23 +40,6 @@ float distance = 9999;     // afstand tot het maanoppervlak in meter – m
 uint16_t fuelReserve = 1500;  // liter (brandstof * 4 = fuelReserve)
 uint8_t burst = 0;            // Burst heeft een waarde tussen 0 en 50
 
-void initTimer() {
-    TCCR2A |= (1 << (WGM21)); // Clear Timer on Compare Mode.
-    OCR2A = 250; // Zet de compare match waarde op 250 (OCR2A = 250).
-    TIMSK2 |= (1 << (OCIE2A)); // OCRA interrupt enablen.
-    sei(); // Interrupts globaal enablen.
-}
-
-void startTimer() {
-    TCCR2B |= (1 << (CS22)) | (1 << (CS21)); // Schalingsfactor = 256. (startTimer)
-    printString("Timer Start\n");
-}
-
-void stopTimer() {
-    TCCR2B = (0 << (CS22)) | (0 << (CS21)) | (0 << (CS20)); // Schalingsfactor = 0.
-    printString("Timer Stop\n");
-}
-
 void printlogboek() {
     for (int i = 0; i < 50; i++) {
         printf("Op seconden: %d\n", (i + 1));
@@ -65,7 +49,7 @@ void printlogboek() {
 }
 
 void landt() {
-    stopTimer();
+    stopTimer2();
     lightDownAllLeds();
     positiveTone();
     printString("Gefeliciteerd, je bent geland op de maan.\n");
@@ -74,7 +58,7 @@ void landt() {
 }
 
 void crash() {
-    stopTimer();
+    stopTimer2();
     lightDownAllLeds();
     negativeTone();
     printString("Je bent gecrasht op de maan, helaas.\n");
@@ -84,8 +68,7 @@ void crash() {
 
 // Deze ISR loopt elke 4ms.
 ISR(TIMER2_COMPA_vect) { // Timer interrupt.
-    // Verhoog counter met 1.
-    counter++;
+    counter++; // Verhoog counter met 1.
     // Als counter + 1 deelbaar is door VEELVOUD tel één seconde.
     if (counter % VEELVOUD == 0) { // Nieuwe situatie: (Wordt elke seconde uitgevoerd).
         currentSpeed +=  gravity - burst / 5;
@@ -138,8 +121,8 @@ int main() {
     enableBuzzer();
     enableButton(1);
     enableButtonInterrupt(1);
-    initTimer();
-    startTimer();
+    enableTimer2();
+    startTimer2();
 
     timestamps = calloc(75, sizeof(TIMESTAMP));
 

@@ -5,4 +5,10 @@
  */
 
 // Enable
-void initTimer0();
+void enableTimer2();
+
+// Start
+void startTimer2();
+
+// Stop
+void stopTimer2();

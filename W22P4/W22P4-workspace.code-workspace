@@ -40,7 +40,11 @@
 		"files.associations": {
 			"interrupt.h": "c",
 			"button.h": "c",
-			"delay.h": "c"
+			"delay.h": "c",
+			"display.h": "c",
+			"usart.h": "c",
+			"buzzer.h": "c",
+			"stdlib.h": "c"
 		}
 	}
 }

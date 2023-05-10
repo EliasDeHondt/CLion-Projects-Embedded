@@ -28,14 +28,14 @@ typedef struct { // TODO
   float seconden;
 } RONDE;
 
-uint8_t button_pushed = 0; // Boolean
+// Global variables.
+uint8_t button_pushed = 0; // Boolean.
 uint8_t live = 4;
 uint8_t pawn;
 uint8_t display = 1;
-uint8_t moveDown = 0; // Boolean
-uint8_t down = 2; // Boolean
+uint8_t moveDown = 0; // Boolean.
+uint8_t down = 2; // Boolean.
 uint8_t teller = 0;
-uint16_t seed;
 uint8_t score = 0; // The score is increased by 1 after each round.
 
 void initializing() { // Default configuration and initialization.
@@ -54,7 +54,7 @@ void startup() {
   while (1) { // Player has not started the game yet.
     heartbeat(400);
     if (buttonPushed(0) || buttonPushed(1) || buttonPushed(2)) {
-      seed = readPotentio(); // 0 ... 1023
+      uint16_t seed = readPotentio(); // 0 ... 1023
       srand(seed);
       countdown();
       startTone(); // Small sound to indicate that the game is about to start.
@@ -151,7 +151,7 @@ void gameLoop() {
 int main() {
   initializing();
   startup();
-  initializeLedCounter(); // Set up the life counter.
+  initializeLedCounter(live); // Set up the life counter.
   enableButtonInterrupt(1); // Pause game.
   while (1) {
     gameLoop();

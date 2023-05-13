@@ -19,28 +19,26 @@
 #include <buzzer.h>        // Provides functions for controlling a buzzer.
 #include <timer.h>         // Provides functions for setting up and controlling timers.
 
-
 #define BUTTONDELAY _delay_ms(500);
 #define MULTIPLE 250
 
 typedef struct {
-  uint16_t followNumber;
-  uint16_t missedattacks;
-  uint16_t minutes;
-  uint16_t seconds;
+  uint16_t followNumber, missedattacks, minutes, seconds;
 } ROUND;
 
 // Global variables.
-uint8_t button_pushed = 0; // Boolean.
+uint8_t button_pushed = 0;  // Boolean (Staat standaard op 0 = False).
+uint32_t counter = 0;
+uint16_t seconds = 0;       // Seconds per round.
+
 uint8_t live = 4;
 uint8_t pawn;
 uint8_t display = 1;
-uint8_t moveDown = 0; // Boolean.
-uint8_t down = 2; // Boolean.
-uint8_t teller = 0;
-uint8_t score = 0; // The score is increased by 1 after each round.
-uint32_t counter = 0;
-uint16_t seconds = 0; // Seconds per round.
+uint8_t moveDown = 0;       // Boolean (Staat standaard op 0 = False).
+uint8_t down = 2;           // Boolean (Staat standaard op 2 = NULL).
+uint8_t teller = 0;         // Indicate which display segment should be addressed. (Van 0 tot 5) 
+uint8_t score = 0;          // The score is increased by 1 after each round.
+
 
 void initializing() { // Default configuration and initialization.
   initUSART();
@@ -54,7 +52,7 @@ void initializing() { // Default configuration and initialization.
   printString("Basic initialization completed.\n"); // Serial feedback.
 }
 
-void startup() {
+void startup() { // Preparing the game.
   printString("Turn the potentiometer and press a button of your choice to start the game.\n"); // Serial feedback.
   while (1) { // Player has not started the game yet.
     heartbeat(400);
@@ -64,7 +62,6 @@ void startup() {
       countdown();
       startTone(); // Small sound to indicate that the game is about to start.
       startTimer2();
-      BUTTONDELAY;
       break;
     }
   }
@@ -131,34 +128,34 @@ void initializeLedCounter() { // Ensures that the 4 LEDs always display the corr
 
 void printLed() { // Method that is responsible for showing the correct info on the display at all times.
   writeToSegment(pawn, 0b11110111); // Bottom line of seven segment display (Player).
-  if (teller == 0 || teller == 1) {
-    writeToSegment(display, 0b11111110); // display x led A
-  }
+
+  if (teller == 1) writeToSegment(display, 0b11111110); // display x led A
+
   else if (teller == 2) {
     if (down == 0) writeToSegment(display, 0b11011111); // display x led F
     if (down == 1) writeToSegment(display, 0b11111101); // display x led B
   }
-  else if (teller == 3) {
-    writeToSegment(display, 0b10111111); // display x led G
-  }
+
+  else if (teller == 3) writeToSegment(display, 0b10111111); // display x led G
+
   else if (teller == 4) {
     if (down == 0) writeToSegment(display, 0b11101111); // display x led E
     if (down == 1) writeToSegment(display, 0b11111011); // display x led C
   }
-  else if (teller == 5) {
-    writeToSegment(display, 0b11110111); // display x led D
-  }
+
+  else if (teller == 5) writeToSegment(display, 0b11110111); // display x led D
 }
 
 void moveEnemy() {
-  if (moveDown == 0) { // (A | G | D)
+
+  if (moveDown == 0) { // (A | G | D) (False)
     uint8_t horizontal = rand() % 2; // van 0 tot 1
-    if (horizontal == 0 && display > 0) display = display - 1; // Move to the left (Computer).
-    if (horizontal == 1 && display < 3) display = display + 1; // Move to the right (Computer).
+    if (horizontal == 0 && display > 0) display -= 1; // Move to the left (Computer).
+    if (horizontal == 1 && display < 3) display += 1; // Move to the right (Computer).
     teller++;
     moveDown = !moveDown;
   }
-  else if (moveDown == 1) { // (F of B | E of C)
+  else if (moveDown == 1) { // (F of B | E of C) (True)
     uint8_t vertical = rand() % 2; // van 0 tot 1
     down = vertical;
     teller++;
@@ -200,8 +197,10 @@ int main() {
   initializeLedCounter(live); // Set up the life counter.
   enableButtonInterrupt(1); // Pause game.
   ROUND* rounds = calloc(4, sizeof(ROUND)); // Reserving 4 rounds In the heap.
+
   while (1) {
     gameLoop();
+    
     if (pawn == display && teller == 5) { // Next round is initiated.
       subtractLive();
       accessHeap(rounds, 0); // Write To Heap.
@@ -210,6 +209,7 @@ int main() {
       teller = 0; // Set counter to zero.
       seconds = 0;
     }
+
     else if (teller == 5) { // Keeping the same round.
       score++; // Player has completed a round.
       teller = 0; // Set counter to zero.

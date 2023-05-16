@@ -1,5 +1,10 @@
-#include "display.h"
+/**
+ * @author Elias De Hondt
+ * @see https://eliasdh.com
+ * @since 01/05/2023
+ */
 
+#include "display.h"
 #include <avr/io.h>
 #include <util/delay.h>
 #include <string.h>

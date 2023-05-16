@@ -1,3 +1,9 @@
+/**
+ * @author Elias De Hondt
+ * @see https://eliasdh.com
+ * @since 01/05/2023
+ */
+
 #define __DELAY_BACKWARD_COMPATIBLE__
 #define NUMBER_OF_LEDS 4
 

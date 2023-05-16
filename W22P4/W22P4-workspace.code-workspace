@@ -34,6 +34,17 @@
 		{
 			"name": "Stopwatch_Maken",
 			"path": "Stopwatch_Maken"
+		},
+		{
+			"name": "Demo_externe_analoge_sensor",
+			"path": "Demo_externe_analoge_sensor"
+		},
+		{
+			"name": "Demo_externe_digitale_sensor",
+			"path": "Demo_externe_digitale_sensor"
+		},
+		{
+			"path": "talk_to_pc"
 		}
 	],
 	"settings": {

@@ -1,3 +1,9 @@
+/**
+ * @author Elias De Hondt
+ * @see https://eliasdh.com
+ * @since 01/05/2023
+ */
+
 #include <avr/io.h>
 
 #define LOW 0

@@ -31,14 +31,12 @@ uint8_t button_pushed = 0;  // Boolean (Staat standaard op 0 = False).
 uint32_t counter = 0;
 uint16_t seconds = 0;       // Seconds per round.
 
-uint8_t live = 4;
-uint8_t pawn;
-uint8_t display = 1;
+uint8_t player_Pawn;
+uint8_t computer_Pawn = 1;
 uint8_t moveDown = 0;       // Boolean (Staat standaard op 0 = False).
 uint8_t down = 2;           // Boolean (Staat standaard op 2 = NULL).
 uint8_t teller = 0;         // Indicate which display segment should be addressed. (Van 0 tot 5) 
 uint8_t score = 0;          // The score is increased by 1 after each round.
-
 
 void initializing() { // Default configuration and initialization.
   initUSART();
@@ -52,22 +50,23 @@ void initializing() { // Default configuration and initialization.
   printString("Basic initialization completed.\n"); // Serial feedback.
 }
 
-void startup() { // Preparing the game.
+uint8_t startup() { // Preparing the game.
   printString("Turn the potentiometer and press a button of your choice to start the game.\n"); // Serial feedback.
   while (1) { // Player has not started the game yet.
     heartbeat(400);
     if (buttonPushed(0) || buttonPushed(1) || buttonPushed(2)) {
       uint16_t seed = readPotentio(); // 0 ... 1023
+      uint8_t live = 4;
       srand(seed);
       countdown();
       startTone(); // Small sound to indicate that the game is about to start.
       startTimer2();
-      break;
+      return live;
     }
   }
 }
 
-void accessHeap(ROUND* rounds, uint8_t read) { //
+void accessHeap(ROUND* rounds, uint8_t read) { // Read/Write To/From Heap
   if (read) { // Read From Heap.
     for (uint8_t i = 0; i < 4; i++) {
       printf("FollowNumber: %d \t Missedattacks: %d \t", rounds[i].followNumber, rounds[i].missedattacks);
@@ -112,13 +111,15 @@ ISR(PCINT1_vect) { // Method that is responsible for all interruptions.
   if (buttonPushed(1)) button_pushed = !button_pushed;
 }
 
-void subtractLive() { // The name of the function is self-explanatory :).
+uint8_t subtractLive(uint8_t live) { // The name of the function is self-explanatory :).
   negativeTone();
   live--;
   printf("One live has been subtracted. Number of live: %d\n", live); // Serial feedback.
+  return live;
+
 }
 
-void initializeLedCounter() { // Ensures that the 4 LEDs always display the correct value.
+void initializeLedCounter(uint8_t live) { // Ensures that the 4 LEDs always display the correct value.
   if (live == 4) lightUpAllLeds(); // Default behavior.
   if (live <= 3) {
     flashLed(live, 1000);
@@ -127,31 +128,31 @@ void initializeLedCounter() { // Ensures that the 4 LEDs always display the corr
 }
 
 void printLed() { // Method that is responsible for showing the correct info on the display at all times.
-  writeToSegment(pawn, 0b11110111); // Bottom line of seven segment display (Player).
+  writeToSegment(player_Pawn, 0b11110111); // Bottom line of seven segment display (Player).
 
-  if (teller == 1) writeToSegment(display, 0b11111110); // display x led A
+  if (teller == 1) writeToSegment(computer_Pawn, 0b11111110); // display x led A
 
   else if (teller == 2) {
-    if (down == 0) writeToSegment(display, 0b11011111); // display x led F
-    if (down == 1) writeToSegment(display, 0b11111101); // display x led B
+    if (down == 0) writeToSegment(computer_Pawn, 0b11011111); // display x led F
+    if (down == 1) writeToSegment(computer_Pawn, 0b11111101); // display x led B
   }
 
-  else if (teller == 3) writeToSegment(display, 0b10111111); // display x led G
+  else if (teller == 3) writeToSegment(computer_Pawn, 0b10111111); // display x led G
 
   else if (teller == 4) {
-    if (down == 0) writeToSegment(display, 0b11101111); // display x led E
-    if (down == 1) writeToSegment(display, 0b11111011); // display x led C
+    if (down == 0) writeToSegment(computer_Pawn, 0b11101111); // display x led E
+    if (down == 1) writeToSegment(computer_Pawn, 0b11111011); // display x led C
   }
 
-  else if (teller == 5) writeToSegment(display, 0b11110111); // display x led D
+  else if (teller == 5) writeToSegment(computer_Pawn, 0b11110111); // display x led D
 }
 
 void moveEnemy() {
 
   if (moveDown == 0) { // (A | G | D) (False)
     uint8_t horizontal = rand() % 2; // van 0 tot 1
-    if (horizontal == 0 && display > 0) display -= 1; // Move to the left (Computer).
-    if (horizontal == 1 && display < 3) display += 1; // Move to the right (Computer).
+    if (horizontal == 0 && computer_Pawn > 0) computer_Pawn -= 1; // Move to the left (Computer).
+    if (horizontal == 1 && computer_Pawn < 3) computer_Pawn += 1; // Move to the right (Computer).
     teller++;
     moveDown = !moveDown;
   }
@@ -175,17 +176,19 @@ ISR(TIMER2_COMPA_vect) { // This ISR runs every 4ms. Timer Interrupt.
 
 void gameLoop() {
   if (buttonPushed(0)) { // Move to the left (Player).
-    if (pawn > 0) pawn--;
+    if (player_Pawn > 0) player_Pawn--;
     BUTTONDELAY;
   }
   if (button_pushed) { // Pause game.
     printString("The game is paused.\n"); // Serial feedback.
     BUTTONDELAY;
+    stopTimer2();
     while (button_pushed) ledLus();
+    startTimer2();
     BUTTONDELAY;
   }
   if (buttonPushed(2)) { // Move to the right (Player).
-    if (pawn < 3) pawn++;
+    if (player_Pawn < 3) player_Pawn++;
     BUTTONDELAY;
   }
   printLed();
@@ -193,7 +196,7 @@ void gameLoop() {
 
 int main() {
   initializing();
-  startup();
+  uint8_t live = startup();
   initializeLedCounter(live); // Set up the life counter.
   enableButtonInterrupt(1); // Pause game.
   ROUND* rounds = calloc(4, sizeof(ROUND)); // Reserving 4 rounds In the heap.
@@ -201,10 +204,10 @@ int main() {
   while (1) {
     gameLoop();
     
-    if (pawn == display && teller == 5) { // Next round is initiated.
-      subtractLive();
+    if (player_Pawn == computer_Pawn && teller == 5) { // Next round is initiated.
+      live = subtractLive(live);
       accessHeap(rounds, 0); // Write To Heap.
-      initializeLedCounter();
+      initializeLedCounter(live);
       if (live == 0) gameOver(rounds);
       teller = 0; // Set counter to zero.
       seconds = 0;

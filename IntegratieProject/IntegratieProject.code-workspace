@@ -12,7 +12,8 @@
 		"files.associations": {
 			"interrupt.h": "c",
 			"display.h": "c",
-			"timer.h": "c"
+			"timer.h": "c",
+			"button.h": "c"
 		}
 	}
 }

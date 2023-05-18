@@ -19,7 +19,7 @@
 #include <buzzer.h>        // Provides functions for controlling a buzzer.
 #include <timer.h>         // Provides functions for setting up and controlling timers.
 
-#define BUTTONDELAY _delay_ms(500);
+#define BUTTONDELAY _delay_ms(500)
 #define MULTIPLE 250
 
 typedef struct {
@@ -30,9 +30,8 @@ typedef struct {
 uint8_t button_pushed = 0;  // Boolean (Staat standaard op 0 = False).
 uint32_t counter = 0;
 uint16_t seconds = 0;       // Seconds per round.
-
 uint8_t player_Pawn;
-uint8_t computer_Pawn = 1;
+uint8_t computer_Pawn[2] = {1, 3};
 uint8_t moveDown = 0;       // Boolean (Staat standaard op 0 = False).
 uint8_t down = 2;           // Boolean (Staat standaard op 2 = NULL).
 uint8_t teller = 0;         // Indicate which display segment should be addressed. (Van 0 tot 5) 
@@ -127,32 +126,34 @@ void initializeLedCounter(uint8_t live) { // Ensures that the 4 LEDs always disp
   }
 }
 
-void printLed() { // Method that is responsible for showing the correct info on the display at all times.
+void printLed(uint8_t pawn) { // Method that is responsible for showing the correct info on the display at all times.
   writeToSegment(player_Pawn, 0b11110111); // Bottom line of seven segment display (Player).
 
-  if (teller == 1) writeToSegment(computer_Pawn, 0b11111110); // display x led A
+  if (teller == 1) writeToSegment(pawn, 0b11111110); // display x led A
 
   else if (teller == 2) {
-    if (down == 0) writeToSegment(computer_Pawn, 0b11011111); // display x led F
-    if (down == 1) writeToSegment(computer_Pawn, 0b11111101); // display x led B
+    if (down == 0) writeToSegment(pawn, 0b11011111); // display x led F
+    if (down == 1) writeToSegment(pawn, 0b11111101); // display x led B
   }
 
-  else if (teller == 3) writeToSegment(computer_Pawn, 0b10111111); // display x led G
+  else if (teller == 3) writeToSegment(pawn, 0b10111111); // display x led G
 
   else if (teller == 4) {
-    if (down == 0) writeToSegment(computer_Pawn, 0b11101111); // display x led E
-    if (down == 1) writeToSegment(computer_Pawn, 0b11111011); // display x led C
+    if (down == 0) writeToSegment(pawn, 0b11101111); // display x led E
+    if (down == 1) writeToSegment(pawn, 0b11111011); // display x led C
   }
 
-  else if (teller == 5) writeToSegment(computer_Pawn, 0b11110111); // display x led D
+  else if (teller == 5) writeToSegment(pawn, 0b11110111); // display x led D
+  
 }
 
 void moveEnemy() {
-
   if (moveDown == 0) { // (A | G | D) (False)
-    uint8_t horizontal = rand() % 2; // van 0 tot 1
-    if (horizontal == 0 && computer_Pawn > 0) computer_Pawn -= 1; // Move to the left (Computer).
-    if (horizontal == 1 && computer_Pawn < 3) computer_Pawn += 1; // Move to the right (Computer).
+    for (uint8_t i = 0; i < 2; i++) {
+      uint8_t horizontal = rand() % 2; // van 0 tot 1
+      if (horizontal == 0 && computer_Pawn[i] > 0) computer_Pawn[i] -= 1; // Move to the left (Computer).
+      if (horizontal == 1 && computer_Pawn[i] < 3) computer_Pawn[i] += 1; // Move to the right (Computer).
+    }
     teller++;
     moveDown = !moveDown;
   }
@@ -162,7 +163,8 @@ void moveEnemy() {
     teller++;
     moveDown = !moveDown;
   }
-  printLed(); // Is a bit redundant, But it looks better.
+  printf("JavaData %d%d%d%d\n", computer_Pawn[0], player_Pawn, teller, down); // JavaFx (EXTRA)
+  if (score >= 2) printf("JavaData %d%d%d%d\n", computer_Pawn[1], player_Pawn, teller, down); // JavaFx (EXTRA)
 }
 
 ISR(TIMER2_COMPA_vect) { // This ISR runs every 4ms. Timer Interrupt.
@@ -191,7 +193,8 @@ void gameLoop() {
     if (player_Pawn < 3) player_Pawn++;
     BUTTONDELAY;
   }
-  printLed();
+  printLed(computer_Pawn[0]);
+  if (score >= 2) printLed(computer_Pawn[1]);
 }
 
 int main() {
@@ -204,7 +207,7 @@ int main() {
   while (1) {
     gameLoop();
     
-    if (player_Pawn == computer_Pawn && teller == 5) { // Next round is initiated.
+    if ((player_Pawn == computer_Pawn[0] || player_Pawn == computer_Pawn[1]) && teller == 5) { // Next round is initiated.
       live = subtractLive(live);
       accessHeap(rounds, 0); // Write To Heap.
       initializeLedCounter(live);

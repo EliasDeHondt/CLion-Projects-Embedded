@@ -163,8 +163,6 @@ void moveEnemy() {
     teller++;
     moveDown = !moveDown;
   }
-  printf("JavaData %d%d%d%d\n", computer_Pawn[0], player_Pawn, teller, down); // JavaFx (EXTRA)
-  if (score >= 2) printf("JavaData %d%d%d%d\n", computer_Pawn[1], player_Pawn, teller, down); // JavaFx (EXTRA)
 }
 
 ISR(TIMER2_COMPA_vect) { // This ISR runs every 4ms. Timer Interrupt.
@@ -172,6 +170,8 @@ ISR(TIMER2_COMPA_vect) { // This ISR runs every 4ms. Timer Interrupt.
   // Als counter + 1 deelbaar is door VEELVOUD tel één seconde.
   if (counter % MULTIPLE == 0) { // If counter + 1 is divisible by MULTIPLE count one second.
     moveEnemy();
+    //printf("JavaData %d%d%d%d\n", computer_Pawn[0], player_Pawn, teller, down); // JavaFx (EXTRA)
+    //if (score >= 2) printf("JavaData %d%d%d%d\n", computer_Pawn[1], player_Pawn, teller, down); // JavaFx (EXTRA)
     seconds++;
   }
 }

@@ -45,6 +45,10 @@
 		},
 		{
 			"path": "talk_to_pc"
+		},
+		{
+			"name": "Test_Data",
+			"path": "Test_Data"
 		}
 	],
 	"settings": {

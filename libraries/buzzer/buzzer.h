@@ -4,6 +4,9 @@
  * @since 09/05/2023
  */
 
+#include <stdlib.h>
+#include <avr/io.h>
+
 // FREQUENCIES VAN DE VERSCHILLENDE NOTEN
 #define C5 523.250
 #define D5 587.330

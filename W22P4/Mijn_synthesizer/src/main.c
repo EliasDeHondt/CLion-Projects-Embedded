@@ -54,9 +54,8 @@ int main() {
 
   while (1) {
     int frequentie = readPotentio();
-    if (playing) {
-      playTone(frequentie, 500);
-    } else {
+    if (playing) playTone(frequentie, 500);
+    else {
       writeNumberAndWait(frequentie, 2000);
       printf("Potentiometer waarde: %d\n", frequentie);
     }

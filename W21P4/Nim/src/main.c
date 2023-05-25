@@ -32,25 +32,25 @@ void initializing() { // Default configuration and initialization.
   printf("Basic initialization completed.\n"); // Serial feedback.
 }
 
-void writeOnHeab() {
+void writeOnHeap() {
     if (speler == 'C') {
         spelDataSpeler[teller] = malloc(strlen("Computer") + 1);
         strcpy(spelDataSpeler[teller], "Computer");
 
         spelDataAantal[teller] = malloc(sizeof(uint8_t));
-        *(spelDataAantal[teller]) = c_aantal;  // waarde toewijzen aan de uint8_t door middel van dereferencing 
+        *(spelDataAantal[teller]) = c_aantal;  // Waarde toewijzen aan de uint8_t door middel van dereferencing 
     }
     if (speler == 'P') {
         spelDataSpeler[teller] = malloc(strlen("Player") + 1);
         strcpy(spelDataSpeler[teller], "Player");
 
         spelDataAantal[teller] = malloc(sizeof(uint8_t));
-        *(spelDataAantal[teller]) = p_aantal;  // waarde toewijzen aan de uint8_t door middel van dereferencing
+        *(spelDataAantal[teller]) = p_aantal;  // Waarde toewijzen aan de uint8_t door middel van dereferencing
     }
-    printString("Game data is transferred to the head.\n");
+    printString("Game data is transferred to the heap.\n");
 }
 
-void readTheHeab() {
+void readTheHeap() {
     for (uint8_t i = 0; i < teller; i++) {
         // %hhu is een formaatspecificatie die gebruikt wordt in C om een unsigned char of uint8_t variabele te formatteren.
         printf("%s took %hhu matches on turn %hhu.\n", spelDataSpeler[i], *spelDataAantal[i], (i+1));
@@ -96,7 +96,7 @@ void LedDisplays() {
 
 void gewonnen() {
     printf("Gefeliciteerd speler %c heeft gewonnen.\n", speler);
-    readTheHeab();
+    readTheHeap();
     while (1) ledLus();
 }
 
@@ -112,7 +112,7 @@ void verloopSpel() {
             if (beschikbaarAantal  >= p_aantal) {
                 beschikbaarAantal  = beschikbaarAantal  - p_aantal;
                 printf("De player heeft het volgende aantal gekozen: %d\n", p_aantal);
-                writeOnHeab();
+                writeOnHeap();
                 teller++;
                 kiesSpeler();
                 DELAY;
@@ -137,7 +137,7 @@ void verloopSpel() {
         if (buttonPushed(1)) {
             beschikbaarAantal = beschikbaarAantal - c_aantal;
             printf("De computer heeft het volgende aantal gekozen: %d\n", c_aantal);
-            writeOnHeab();
+            writeOnHeap();
             teller++;
             kiesSpeler();
             DELAY;

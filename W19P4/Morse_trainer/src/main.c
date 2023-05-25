@@ -41,8 +41,8 @@ void punt() {
 
 void startLed() {
   for (int i = 0; i < 4; i++) {
-    _delay_ms(1000);  // Wacht 1 seconden.
-    lightDownLed(i);  // Zet led x uit.
+    _delay_ms(1000);    // Wacht 1 seconden.
+    lightDownLed(i);    // Zet led x uit.
   }
   lightDownAllLeds();
 }
@@ -66,21 +66,14 @@ int main() {
   lightUpAllLeds();  // Zet al de Lets aan.
   srand(0);          // Set the seed for the random number generator.
   startLed();        // Start Led timer.
-
   for (int i = 0; i < 10; i++) {
     int random_index = rand() % 36;  // Kies een willekeurig index nummer tussen 0 en 35.
     char karakter = karakters[random_index];
-
-    for (int j = 0; morse[random_index][j] != '\0';
-         j++) {  // Zolang dat we niet op het einde van de string zitten.
-      if (morse[random_index][j] == '.') {
-        punt();  // toon een korte lichtsignaal
-      } else {
-        streep();  // toon een lange lichtsignaal
-      }
+    for (int j = 0; morse[random_index][j] != '\0'; j++) {  // Zolang dat we niet op het einde van de string zitten.
+      if (morse[random_index][j] == '.') punt();  // toon een korte lichtsignaal
+      else streep();  // toon een lange lichtsignaal
     }
   }
-  
   dans();  // Led dans.
   return 0;
 }

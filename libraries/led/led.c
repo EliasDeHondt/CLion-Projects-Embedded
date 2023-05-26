@@ -11,46 +11,40 @@
 #include <avr/io.h>
 
 void enableLed(int lednumber) {
-  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
-  DDRB |= (1 << (PB2 + lednumber)); // 1 op juiste pin want output
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return; // Als lednumber niet tussen 0 en 3 is, return (dus stoppen)
+  DDRB |= (1 << (PB2 + lednumber)); // Juiste pin op 1 zetten
 }
  
 void enableLeds(uint8_t leds) {
-  leds &= 0b00001111; // Eerste 4 bits staan nu op 0
-  DDRB |= (leds << PB2); // Shiften en juiste pins op 1 zetten
+  leds &= 0b00001111;
+  DDRB |= (leds << PB2); // Juiste pin op 1 zetten
 }
  
-void enableAllLeds() { 
-    enableLeds(0b00001111); 
-}
+void enableAllLeds() { enableLeds(0b00001111); } // Alle leds aanzetten
  
 void lightUpLed(int lednumber) {
-  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
-  PORTB &= ~(1 << (PB2 + lednumber)); // Juiste pin op 0 zetten 
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return; // Als lednumber niet tussen 0 en 3 is, return (dus stoppen)
+  PORTB &= ~(1 << (PB2 + lednumber)); // Juiste pin op 0 zetten
 }
  
 void lightUpLeds(uint8_t leds) {
   leds &= 0b00001111;
-  PORTB &= ~(leds << PB2);
+  PORTB &= ~(leds << PB2); // Juiste pin op 0 zetten
 }
  
-void lightUpAllLeds() { 
-    lightUpLeds(0b00001111); 
-}
+void lightUpAllLeds() { lightUpLeds(0b00001111); } // Alle leds uitzetten
  
-void lightDownLed(int lednumber) {  // Juiste pin 0 (AAN)
-  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return;
+void lightDownLed(int lednumber) {
+  if (lednumber < 0 || lednumber >= NUMBER_OF_LEDS) return; // Als lednumber niet tussen 0 en 3 is, return (dus stoppen)
   PORTB |= (1 << (PB2 + lednumber)); // Juiste pin op 1 zetten
 }
  
 void lightDownLeds(uint8_t leds) {
   leds &= 0b00001111;  
-  PORTB |= (leds << PB2);
+  PORTB |= (leds << PB2); // Juiste pin op 1 zetten
 }
  
-void lightDownAllLeds() { 
-    lightDownLeds(0b00001111); 
-}
+void lightDownAllLeds() { lightDownLeds(0b00001111); } // Alle leds uitzetten
 
 void dimLed(int lednumber, int percentage, int duration) {
     for (int i = duration; i > 0; i -= 10) { // Is de opgegeven tijdsperiode. (Stap waarde 10)

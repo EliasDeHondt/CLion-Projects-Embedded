@@ -78,7 +78,7 @@ void accessHeap(ROUND* rounds, uint8_t read) { // Read/Write To/From Heap
     for (uint8_t i = 0; i < 4; i++) total_missedattacks += rounds[i].missedattacks;
     uint8_t current_round_score = score - total_missedattacks;
     // Update the current round data in the heap
-    for (uint8_t i = 0; i < 3; i++) {
+    for (uint8_t i = 0; i < 3; i++) { // Extra data: voor een p->naam = malloc(strlen(naam) + 1); en dan strcpy(p->naam, naam);
       rounds[i] = rounds[i+1];
       rounds[i].followNumber = i + 1;
     }
@@ -135,7 +135,7 @@ void printLed(uint8_t pawn) { // Method that is responsible for showing the corr
     if (down == 0) writeToSegment(pawn, 0b11011111); // display x led F
     if (down == 1) writeToSegment(pawn, 0b11111101); // display x led B
   }
-
+  
   else if (teller == 3) writeToSegment(pawn, 0b10111111); // display x led G
 
   else if (teller == 4) {
@@ -202,7 +202,7 @@ int main() {
   uint8_t live = startup();
   initializeLedCounter(live); // Set up the life counter.
   enableButtonInterrupt(1); // Pause game.
-  ROUND* rounds = calloc(4, sizeof(ROUND)); // Reserving 4 rounds In the heap.
+  ROUND* rounds = calloc(4, sizeof(ROUND)); // Reserving 4 rounds in the heap.
 
   while (1) {
     gameLoop();

@@ -127,31 +127,15 @@ void writeToSegment(uint8_t segment, uint8_t value) {
   sbi(PORTD, LATCH_DIO);
 }
 
+uint8_t ledLusBi[12] = {0b11011111, 0b11101111, 0b11110111, 0b11110111, 0b11110111, 0b11110111, 
+                        0b11111011, 0b11111101, 0b11111110, 0b11111110, 0b11111110, 0b11111110};
+int ledLusSegment[12] = {0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 0};
+
 void ledLus() {
-  writeToSegment(0, 0b11011111);
-  DELAYE;
-  writeToSegment(0, 0b11101111);
-  DELAYE;
-  writeToSegment(0, 0b11110111);
-  DELAYE;
-  writeToSegment(1, 0b11110111);
-  DELAYE;
-  writeToSegment(2, 0b11110111);
-  DELAYE;
-  writeToSegment(3, 0b11110111);
-  DELAYE;
-  writeToSegment(3, 0b11111011);
-  DELAYE;
-  writeToSegment(3, 0b11111101);
-  DELAYE;
-  writeToSegment(3, 0b11111110);
-  DELAYE;
-  writeToSegment(2, 0b11111110);
-  DELAYE;
-  writeToSegment(1, 0b11111110);
-  DELAYE;
-  writeToSegment(0, 0b11111110);
-  DELAYE;
+  for (uint8_t i = 0; i < sizeof(ledLusBi); i++) {
+    writeToSegment(ledLusSegment[i], ledLusBi[i]);
+    DELAYE;
+  }
 }
 
 void displayOff() {

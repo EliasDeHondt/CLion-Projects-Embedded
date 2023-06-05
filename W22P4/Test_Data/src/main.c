@@ -9,166 +9,111 @@
 #include <stdlib.h>
 #include <usart.h>
 #include <util/delay.h>
-
-#define MIN_TIMER 10
-#define MAX_TIMER 240
-
-int totaalTijd;
-int counter = 0;
-
-int statusB1 = 1;
-int statusB2 = 1;
-int statusB3 = 1;
+#include <string.h>
 
 typedef struct {
-  int tijdstip;
-  uint8_t* buttonsPushed;
-} Tijdstip;
+  char* naam;
+  int id;
+} STUDENT;
 
-Tijdstip* logs;
+typedef struct {
+  char* klasNaam;
+  int aantalStudenten;
+  STUDENT* studenten;
+} KLAS;
 
-void tick() {
-  int frequentieArray[6] = {50, 4000, 2000, 1000, 500, 100};
-  playTone(frequentieArray[totaalTijd], 50);
-}
-
-uint8_t* getButtonStatus() {
-  uint8_t* buttonStatus = calloc(3, sizeof(uint8_t));
-  buttonStatus[0] = statusB1;
-  buttonStatus[1] = statusB2;
-  buttonStatus[2] = statusB3;
-  return buttonStatus;
-}
-ISR(TIMER2_COMPA_vect) {
-  counter++;
-  if (counter == 250) {
-    // 250 * 4 = 1000 ms = dus 1 sec voorbij
-    totaalTijd--;
-    printf("\ntotale tijd: %d\n", totaalTijd);
-    playTone(100, 50);
-    logs[totaalTijd].tijdstip = totaalTijd;
-    logs[totaalTijd].buttonsPushed = getButtonStatus();
-    if (totaalTijd <= 5) {
-      if (totaalTijd == 5)
-      {
-        lightDownAllLeds();
-      }
-      if (totaalTijd == 4)
-      {
-        lightDownAllLeds();
-      }
-      if (totaalTijd == 3)
-      {
-        lightDownAllLeds();
-        lightUpLed(0);
-      }
-      if (totaalTijd == 2)
-      {
-        lightDownAllLeds();
-        lightUpLed(0);
-        lightUpLed(1);
-      }
-      if (totaalTijd == 1)
-      {
-        lightDownAllLeds();
-        lightUpLed(0);
-        lightUpLed(1);
-        lightUpLed(2);
-      }
-      if (totaalTijd == 0)
-      {
-        lightDownAllLeds();
-        lightUpAllLeds();
-      }
-      tick();
-    }
-
-    counter = 0;
-  }
-}
-
-void startTimer() { 
-  TCCR2B |= _BV(CS22) | _BV(CS21); 
-}
-
-void initTimer() {
-  TCCR2A |= _BV(WGM21);
-  TIMSK2 |= _BV(OCIE2A);
-  OCR2A = 249;
-}
-
-// fase 1: instellen van de timer
-uint16_t instellenAantalSeconden() {
-  uint16_t potentio;
-
-  while (!buttonPushed(1)) {
-    printf("potentio: %d\n", potentio);
-    potentio = readPotentio();
-
-    if (potentio < MIN_TIMER) {
-      potentio = MIN_TIMER;
-    } else if (potentio > MAX_TIMER) {
-      potentio = MAX_TIMER;
-    }
-  }
-
-  return potentio;
-}
-
-// fase 2: displayen van de timer en aftellen met een buzzer
-void displayAantalSeconden() {
-  writeNumberAndWait(totaalTijd, 100); // lib van Elias De Hondt
-  //writeNumber(totaalTijd);
-  printf("teller: %d\n", totaalTijd);
-}
-
-ISR(PCINT1_vect) {
-  if (buttonPushed(0) && statusB2 == 1 && statusB3 == 1) {
-    statusB1 = 0;
-    statusB2 = 1;
-    statusB3 = 1;
-    printf("button 1 pushed\n");
-  }
-  if (buttonPushed(1) && statusB1 == 0 && statusB3 == 1) {
-    statusB1 = 0;
-    statusB2 = 0;
-    statusB3 = 1;
-    printf("button 2 pushed\n");
-  }
-  if (buttonPushed(2) && statusB1 == 0 && statusB2 == 0) {
-    statusB1 = 0;
-    statusB2 = 0;
-    statusB3 = 0;
-    printf("button 3 pushed\n");
-  }
-  if (totaalTijd > 0) {
-    logs[totaalTijd - 1].tijdstip = totaalTijd;
-    logs[totaalTijd - 1].buttonsPushed = getButtonStatus();
-    printf("tijdstip: %d\n is knop %d ingedrukt\n", logs[totaalTijd - 1].tijdstip, logs[totaalTijd - 1].buttonsPushed[0]);
-  }
-}
 
 int main() {
-  sei();  // Schakel interrupts in
   initUSART();
-  initDisplay();
-  initTimer();
 
-  enablePotentio();
-  enableBuzzer();
-  enableAllLeds();
-  enableAllButtons();
-  enableAllButtonInterrupts(); // lib van Elias De Hondt
-  //enableAllButtonToIntterupt();
-  totaalTijd = instellenAantalSeconden();
-  uint16_t starttijd = totaalTijd;
-  startTimer();
-  logs = calloc(totaalTijd, sizeof(Tijdstip));
-  while (statusB3 == 1) {
-    displayAantalSeconden();
-    if (starttijd == 0) printf("BOEM! de bom is ontploft!!!\n");
+  int a = 0;
+  int* b = &a;
+  printf("a = %d\n", a);
+  printf("b = %d\n", *b);
+
+  int c[] = {1, 2, 3, 4, 5};
+  int* d = c; // Kan ook: int* d = &c[0]; of int* d = &c; of int* d = c; of int* d = &c[0][0];
+  printf("%d", d[0]); // Dit print 1.
+  printf("%d", *d); // Dit print ook 1.
+
+  int e[2][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+  int* f = e; // Kan ook: int* f = &e[0][0]; of int* f = &e[0]; of int* f = e[0]; of int* f = &e;
+  for (int i = 0; i < 6; i++) {
+    // of printf("e[%d] = %d\n", i, *(f + i)); of printf("e[%d] = %d\n", i, *(*f + i)); of printf("e[%d] = %d\n", i, **(f + i));
+    printf("e[%d] = %d\n", i, f[i]); 
   }
 
-  for (int i = 0; i < starttijd; i++) printf("tijdstip: %d\n is knop %d ingedrukt\n", logs[i].tijdstip, logs[i].buttonsPushed[0]);
+
+  int g[2][3][4] = {{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10 ,11, 12}}, {{13, 14, 15, 16}, {17, 18, 19, 20}, {21, 22 ,23, 24}}};
+  int* h = g; // Kan ook: int* h = &g[0][0][0]; of int* h = &g[0][0]; of int* h = &g[0]; of int* h = g[0]; of int* h = &g;
+  for (int i = 0; i < 24; i++) {
+    // of printf("g[%d] = %d\n", i, *(h + i)); of printf("g[%d] = %d\n", i, *(*h + i)); of printf("g[%d] = %d\n", i, **(h + i)); of printf("g[%d] = %d\n", i, ***h + i);
+    printf("g[%d] = %d\n", i, h[i]); 
+  }
+
+  // Dynamische allocatie van geheugen:
+
+  // calloc() zet alle bits op 0.
+  // malloc() alles blijft zoals het is in het geheugen.
+  // realloc() verandert de grootte van de geheugenblokken.
+  // free() geeft het geheugen weer vrij.
+
+  // hier is een voorbeeld van gebruik van malloc() en realloc() en free():
+  int* i = malloc(5 * sizeof(int));
+  // Kan ook: int* i = calloc(5, sizeof(int));
+
+  for (int j = 0; j < 5; j++) i[j] = j; // i[0] = 0, i[1] = 1, i[2] = 2, i[3] = 3, i[4] = 4
+  
+  for (int j = 0; j < 5; j++) printf("i[%d] = %d\n", j, i[j]); // print i[0] t/m i[4] (1, 2, 3, 4, 5)
+  
+  i = realloc(i, 10 * sizeof(int)); // i[0] t/m i[4] blijven hetzelfde, maar er is nu ruimte voor 5 extra elementen.
+
+  for (int j = 5; j < 10; j++) i[j] = j; // i[5] = 5, i[6] = 6, i[7] = 7, i[8] = 8, i[9] = 9
+
+  for (int j = 0; j < 10; j++) printf("i[%d] = %d\n", j, i[j]); // print i[0] t/m i[9] (1, 2, 3, 4, 5, 5, 6, 7, 8, 9)
+
+  free(i); // geheugen weer vrijgeven van i[0] t/m i[9] (1, 2, 3, 4, 5, 5, 6, 7, 8, 9)
+
+  // strcpy() kopieert de inhoud van de ene string naar de andere string.
+  // Hier een voorbeeld van gebruik van strcpy() met malloc() en free():
+
+  char* namen1[5];
+  namen1[0] = malloc(strlen("Elias") + 1);
+  strcpy(namen1[0], "Elias");
+
+  STUDENT* student = malloc(sizeof(STUDENT) * 5);
+
+  char* namen2[] = {"naam1", "naam2", "naam3", "naam4", "naam5"};
+
+  for (int i = 0; i < 5; i++) {
+    student[i].id = i;
+    student->naam = namen2[i]; // ("->") is voor een pointer naar een struct.
+  }
+  
+  // Dinaamische allocatie van geheugen voor een string:
+  char* name;
+  name = malloc(sizeof(name) + 1);
+  strcpy(name, "Elias");
+  printf("%s", name);
+
+  // Nu zonder dinamische allocatie van geheugen voor een string:
+  char name2[] = "Elias";
+  printf("%s", name2);
+  
+
+
+  // Deel 2 van rommel :)
+
+  KLAS* klasen = malloc(sizeof(KLAS) * 4); // Er zijn 4 Klasen.
+  klasen->klasNaam = "INF1A";
+  klasen->aantalStudenten = 5;
+  klasen->studenten = malloc(sizeof(STUDENT) * 5);
+  klasen->studenten->naam = "Elias";
+  klasen->studenten->id = 1;
+
+
+
+
+
   return 0;
 }

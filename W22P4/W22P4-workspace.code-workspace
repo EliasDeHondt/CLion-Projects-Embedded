@@ -59,7 +59,8 @@
 			"display.h": "c",
 			"usart.h": "c",
 			"buzzer.h": "c",
-			"stdlib.h": "c"
+			"stdlib.h": "c",
+			"io.h": "c"
 		}
 	}
 }

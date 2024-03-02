@@ -1,4 +1,16 @@
-# Embedded1
+![logo](https://eliasdh.com/assets/media/images/logo-github.png)
+# 💙🤍Embedded 1🤍💙
+
 Projects [Embedded 1] First year exercises of training applied computer science at the KdG.
 
-![arduino](https://user-images.githubusercontent.com/25233962/234612823-e20e3c18-b157-43f0-a062-745091ff6f0f.png)
+---
+
+## 📘Table of Contents
+
+1. [Links](#links)
+
+---
+
+## 🔗Links
+- 👯 Web hosting company [EliasDH.com](https://eliasdh.com).
+- 📫 How to reach us eliasdehondt@outlook.com.

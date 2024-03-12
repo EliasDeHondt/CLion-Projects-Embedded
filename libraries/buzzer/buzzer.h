@@ -28,7 +28,6 @@ void enableBuzzer();
 
 void playTone(float frequency, uint32_t duration);
 
-// Van Elias :-)
 void positiveTone();
 void negativeTone();
 void startTone();

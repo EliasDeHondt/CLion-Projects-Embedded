@@ -9,7 +9,6 @@
 #include <avr/io.h>
 #include "buzzer.h"
 
-// Van Elias :-)
 #define C4 261.63
 #define D4 293.66
 #define E4 329.63
@@ -53,7 +52,6 @@ void playTone(float frequency, uint32_t duration) {
   }
 }
 
-// Van Elias :-)
 void positiveTone() {
   playTone(G5, 100);  // speel G5 voor 100 milliseconden
   playTone(A5, 100);  // speel A5 voor 100 milliseconden

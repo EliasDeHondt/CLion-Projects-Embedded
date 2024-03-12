@@ -29,7 +29,6 @@ void flipLed(int lednumber); // Zet de LED aan als hij uit staat en zet de LED u
 
 void flashLed(int lednumber, int duration); // Laat de LED knipperen
 
-// Van Elias :-)
 void heartbeat(int duration); // Laat de LED knipperen als een hartslag (1x per seconde) voor een bepaalde tijd
 
 void countdown(); // Laat de LED knipperen als een countdown (1x per seconde) voor een bepaalde tijd

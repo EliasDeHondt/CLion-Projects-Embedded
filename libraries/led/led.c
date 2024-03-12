@@ -97,7 +97,6 @@ void flashLed(int lednumber, int duration) {
   }
 }
 
-// Van Elias :-)
 void heartbeat(int duration) {
   lightUpAllLeds();
   _delay_ms(duration / 2);

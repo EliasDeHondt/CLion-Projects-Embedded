@@ -119,7 +119,6 @@ void scrollingString(char* str, int delay) {
   for (int i = 0; i < (lengte - 3); i++) writeStringAndWait(&str[i], delay);
 }
 
-// Van Elias :-)
 void writeToSegment(uint8_t segment, uint8_t value) {
   cbi(PORTD, LATCH_DIO);
   shift(value, MSBFIRST);
